@@ -1,0 +1,18 @@
+{
+  "name": "red-distribucion-peru",
+  "version": "1.0.0",
+  "description": "Presentación Ejecutiva Interactiva - Red Nacional de Distribución Comercial",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "peru",
+    "interactive-map",
+    "presentation",
+    "dashboard",
+    "executive"
+  ],
+  "author": "Gustavo Huaman",
+  "license": "MIT"
+}
