@@ -4,6 +4,7 @@ import { MapPin, ChevronLeft, ChevronRight, Moon, Sun, RotateCcw, Play, Pause } 
 interface SlideHeaderProps {
   currentSlide: number;
   totalSlides: number;
+  subStep: number;
   isDark: boolean;
   isTouring: boolean;
   onPrev: () => void;
@@ -16,6 +17,7 @@ interface SlideHeaderProps {
 export const SlideHeader: React.FC<SlideHeaderProps> = ({
   currentSlide,
   totalSlides,
+  subStep,
   isDark,
   isTouring,
   onPrev,
@@ -29,30 +31,44 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({
       <div className="header-left">
         <div className="header-badge-tag">
           <MapPin size={17} />
-          <span>RED NACIONAL</span>
+          <span>{currentSlide === 1 ? 'RED NACIONAL' : 'TRAYECTORIA NACIONAL'}</span>
         </div>
         <div>
-          <h1>Presencia a lo largo del Perú</h1>
-          <p>Red Estratégica de Distribución Comercial · 10 Socios · 26 Plazas</p>
+          <h1>
+            {currentSlide === 1
+              ? 'Presencia a lo largo del Perú'
+              : 'El reto de la gerencia distribuidores'}
+          </h1>
+          <p>
+            {currentSlide === 1
+              ? 'Red Estratégica de Distribución Comercial · 10 Socios · 26 Plazas'
+              : `Lo construimos juntos · Consolidado General · Fase ${subStep} de 6`}
+          </p>
         </div>
       </div>
 
       <div className="header-controls">
-        <div className="deck-nav-cluster" title="Navegar entre diapositivas (Flechas ← y →)">
+        <div className="deck-nav-cluster" title="Navegar entre diapositivas y fases (Flechas ← y →)">
           <button
             className="btn-slide-nav"
             onClick={onPrev}
-            title="Diapositiva anterior (Flecha Izquierda ←)"
+            title="Anterior (Flecha Izquierda ←)"
           >
             <ChevronLeft size={20} />
           </button>
           <span className="slide-page-indicator">
-            {currentSlide} / {totalSlides}
+            {currentSlide === 1 ? (
+              `${currentSlide} / ${totalSlides}`
+            ) : (
+              <span>
+                <strong>2/2</strong> <span className="indicator-substep">Paso {subStep}/6</span>
+              </span>
+            )}
           </span>
           <button
             className="btn-slide-nav"
             onClick={onNext}
-            title="Siguiente diapositiva (Flecha Derecha →)"
+            title="Siguiente (Flecha Derecha →)"
           >
             <ChevronRight size={20} />
           </button>

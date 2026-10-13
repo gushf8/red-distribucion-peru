@@ -7,6 +7,7 @@ import { TrajectorySlide } from './components/slide2/TrajectorySlide';
 
 export const App: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState<number>(1);
+  const [subStep, setSubStep] = useState<number>(1); // 1 to 6 on Slide 2
   const [isDark, setIsDark] = useState<boolean>(false); // Light theme is default!
   const [selectedDistributor, setSelectedDistributor] = useState<Distributor | null>(null);
   const [isTouring, setIsTouring] = useState<boolean>(false);
@@ -22,18 +23,42 @@ export const App: React.FC = () => {
     }
   }, [isDark]);
 
+  // Next: on Slide 1 -> Slide 2 Step 1; on Slide 2 -> Step 2..6 -> Slide 1
   const handleNext = useCallback(() => {
-    setCurrentSlide((prev) => (prev < totalSlides ? prev + 1 : 1));
-  }, [totalSlides]);
+    if (currentSlide === 1) {
+      setCurrentSlide(2);
+      setSubStep(1);
+    } else if (currentSlide === 2) {
+      if (subStep < 6) {
+        setSubStep((prev) => prev + 1);
+      } else {
+        setCurrentSlide(1);
+        setSubStep(1);
+      }
+    }
+  }, [currentSlide, subStep]);
 
+  // Prev: on Slide 2 -> Step 6..1 -> Slide 1; on Slide 1 -> Slide 2 Step 6
   const handlePrev = useCallback(() => {
-    setCurrentSlide((prev) => (prev > 1 ? prev - 1 : totalSlides));
-  }, [totalSlides]);
+    if (currentSlide === 2) {
+      if (subStep > 1) {
+        setSubStep((prev) => prev - 1);
+      } else {
+        setCurrentSlide(1);
+      }
+    } else if (currentSlide === 1) {
+      setCurrentSlide(2);
+      setSubStep(6);
+    }
+  }, [currentSlide, subStep]);
 
   const handleReset = useCallback(() => {
     setSelectedDistributor(null);
     setIsTouring(false);
-  }, []);
+    if (currentSlide === 2) {
+      setSubStep(1);
+    }
+  }, [currentSlide]);
 
   // Global Keyboard Navigation (ArrowLeft / ArrowRight / Escape)
   useEffect(() => {
@@ -51,11 +76,10 @@ export const App: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleNext, handlePrev, handleReset]);
 
-  // Auto-tour timer
+  // Auto-tour timer (only runs on slide 1)
   useEffect(() => {
     if (!isTouring) return;
 
-    // Ensure we are on slide 1
     setCurrentSlide(1);
 
     let index = 0;
@@ -74,6 +98,7 @@ export const App: React.FC = () => {
       <SlideHeader
         currentSlide={currentSlide}
         totalSlides={totalSlides}
+        subStep={subStep}
         isDark={isDark}
         isTouring={isTouring}
         onPrev={handlePrev}
@@ -101,7 +126,12 @@ export const App: React.FC = () => {
           className={`slide-page ${currentSlide === 2 ? 'is-active-slide' : ''}`}
           id="slide-2"
         >
-          <TrajectorySlide />
+          <TrajectorySlide
+            subStep={subStep}
+            onSetSubStep={setSubStep}
+            onNextStep={() => setSubStep((prev) => Math.min(6, prev + 1))}
+            onPrevStep={() => setSubStep((prev) => Math.max(1, prev - 1))}
+          />
         </section>
       </div>
     </div>

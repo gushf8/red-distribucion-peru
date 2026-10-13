@@ -4,139 +4,277 @@ import { Flag } from 'lucide-react';
 
 interface TrajectoryBarChartProps {
   trajectory: DistributorTrajectory;
-  isNational: boolean;
+  subStep: number;
 }
 
 export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
   trajectory,
-  isNational,
+  subStep,
 }) => {
-  // Determine scale
-  const rawMax = Math.max(
-    trajectory.cierre25,
-    trajectory.q3_25,
-    trajectory.q3_26,
-    trajectory.oct26,
-    trajectory.nov26,
-    trajectory.cierre26
-  );
-
-  const maxAxis = isNational ? 140 : Math.ceil((rawMax * 1.25) / 5) * 5;
+  const maxAxis = 140;
   const baseY = 410;
-  const topY = 60;
-  const chartHeight = baseY - topY; // 350
+  const topY = 55;
+  const chartHeight = baseY - topY; // 355px
 
   const getY = (val: number) => baseY - (val / maxAxis) * chartHeight;
   const getHeight = (val: number) => (val / maxAxis) * chartHeight;
 
-  // 6 Bars config
+  // 6 Bars configuration mapped to subStep appearance
+  // Order: 1: Cierre 2025, 2: Cierre 2026 Meta, 3: Q3 '25, 4: Q3 '26, 5: Oct-26, 6: Nov-26
   const bars = [
-    { label: 'Cierre 2025', val: trajectory.cierre25, x: 120, grad: 'url(#grad-bar-green)' },
-    { label: "Cierre al Q3 '25", val: trajectory.q3_25, x: 245, grad: 'url(#grad-bar-darknavy)' },
-    { label: "Cierre al Q3 '26", val: trajectory.q3_26, x: 370, grad: 'url(#grad-bar-medblue)' },
-    { label: 'Oct-26', val: trajectory.oct26, x: 495, grad: 'url(#grad-bar-skyblue1)' },
-    { label: 'Nov-26', val: trajectory.nov26, x: 620, grad: 'url(#grad-bar-skyblue2)' },
-    { label: 'Cierre 2026', val: trajectory.cierre26, x: 745, grad: 'url(#grad-bar-targetgreen)', isTarget: true },
+    {
+      id: 'cierre25',
+      label: 'Cierre 2025',
+      val: trajectory.cierre25,
+      x: 140,
+      grad: 'url(#grad-spring-lime)',
+      stepRequired: 1,
+      colorHex: '#84cc16',
+      subtitle: 'Año previo',
+    },
+    {
+      id: 'q3_25',
+      label: "Cierre al Q3 '25",
+      val: trajectory.q3_25,
+      x: 290,
+      grad: 'url(#grad-deep-navy)',
+      stepRequired: 3,
+      colorHex: '#0f2b48',
+      subtitle: 'Periodo base',
+    },
+    {
+      id: 'q3_26',
+      label: "Cierre al Q3 '26",
+      val: trajectory.q3_26,
+      x: 440,
+      grad: 'url(#grad-ocean-blue)',
+      stepRequired: 4,
+      colorHex: '#0284c7',
+      subtitle: 'Avance actual',
+    },
+    {
+      id: 'oct26',
+      label: 'Oct-26',
+      val: trajectory.oct26,
+      x: 590,
+      grad: 'url(#grad-sky-cyan)',
+      stepRequired: 5,
+      colorHex: '#38bdf8',
+      subtitle: 'Proyección 1',
+    },
+    {
+      id: 'nov26',
+      label: 'Nov-26',
+      val: trajectory.nov26,
+      x: 740,
+      grad: 'url(#grad-azure-blue)',
+      stepRequired: 6,
+      colorHex: '#60a5fa',
+      subtitle: 'Proyección 2',
+    },
+    {
+      id: 'cierre26',
+      label: 'Cierre 2026',
+      val: trajectory.cierre26,
+      x: 890,
+      grad: 'url(#grad-emerald-target)',
+      stepRequired: 2,
+      isTarget: true,
+      colorHex: '#22c55e',
+      subtitle: 'Meta Anual',
+    },
   ];
 
-  // Axis steps (7 ticks: 0, 1/6, 2/6... 1)
+  // Axis steps: 0, 20%, 40%, 60%, 80%, 100%
   const steps = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
 
-  // Callout coordinates between Bar 2 (x: 285) and Bar 3 (x: 410)
+  // Coordinates for Delta Callout between Bar Q3 '25 (x: 290) and Bar Q3 '26 (x: 440)
   const bar2Top = getY(trajectory.q3_25);
   const bar3Top = getY(trajectory.q3_26);
-  const calloutBoxY = Math.min(bar2Top, bar3Top) - 65;
+  const calloutBoxY = Math.min(bar2Top, bar3Top) - 72;
+
+  const showDeltaCallout = subStep >= 4;
+  const showTargetBadge = subStep >= 2;
 
   return (
-    <div className="chart-canvas-area">
-      <svg id="trajectory-svg" viewBox="0 0 920 480" xmlns="http://www.w3.org/2000/svg">
+    <div className="chart-canvas-area-clean">
+      <svg
+        id="trajectory-svg-clean"
+        viewBox="0 0 1100 480"
+        xmlns="http://www.w3.org/2000/svg"
+        className="trajectory-svg-element"
+      >
         <defs>
-          <linearGradient id="grad-bar-green" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#a8d38d" />
-            <stop offset="100%" stopColor="#84b865" />
+          {/* Luminous Spring Lime (Bar 1) */}
+          <linearGradient id="grad-spring-lime" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#a3e635" />
+            <stop offset="60%" stopColor="#84cc16" />
+            <stop offset="100%" stopColor="#65a30d" />
           </linearGradient>
 
-          <linearGradient id="grad-bar-darknavy" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#143c68" />
-            <stop offset="100%" stopColor="#0a2342" />
+          {/* Deep Corporate Navy (Bar 2) */}
+          <linearGradient id="grad-deep-navy" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1e3a5f" />
+            <stop offset="70%" stopColor="#0f2b48" />
+            <stop offset="100%" stopColor="#071530" />
           </linearGradient>
 
-          <linearGradient id="grad-bar-medblue" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#1b6ca8" />
-            <stop offset="100%" stopColor="#104e7a" />
+          {/* Oceanic Corporate Blue (Bar 3) */}
+          <linearGradient id="grad-ocean-blue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#0ea5e9" />
+            <stop offset="70%" stopColor="#0284c7" />
+            <stop offset="100%" stopColor="#0369a1" />
           </linearGradient>
 
-          <linearGradient id="grad-bar-skyblue1" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#549fd6" />
-            <stop offset="100%" stopColor="#3b82b6" />
+          {/* Sky Cyan (Bar 4) */}
+          <linearGradient id="grad-sky-cyan" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7dd3fc" />
+            <stop offset="70%" stopColor="#38bdf8" />
+            <stop offset="100%" stopColor="#0284c7" />
           </linearGradient>
 
-          <linearGradient id="grad-bar-skyblue2" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#6bafe2" />
-            <stop offset="100%" stopColor="#4e92c4" />
+          {/* Azure Blue (Bar 5) */}
+          <linearGradient id="grad-azure-blue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#93c5fd" />
+            <stop offset="70%" stopColor="#60a5fa" />
+            <stop offset="100%" stopColor="#2563eb" />
           </linearGradient>
 
-          <linearGradient id="grad-bar-targetgreen" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#b2db97" />
-            <stop offset="100%" stopColor="#8fc471" />
+          {/* Emerald Goal Green (Bar 6 Meta) */}
+          <linearGradient id="grad-emerald-target" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#86efac" />
+            <stop offset="60%" stopColor="#22c55e" />
+            <stop offset="100%" stopColor="#16a34a" />
           </linearGradient>
 
-          <filter id="callout-shadow" x="-20%" y="-20%" width="140%" height="140%">
-            <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.18" />
+          <filter id="clean-card-shadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#071530" floodOpacity="0.14" />
           </filter>
         </defs>
 
-        <text x="35" y="240" transform="rotate(-90 35 240)" className="axis-y-label">
-          Miles de Toneladas
+        {/* Y Axis Title */}
+        <text
+          x="35"
+          y="235"
+          transform="rotate(-90 35 235)"
+          className="axis-y-label-clean"
+        >
+          Miles de Toneladas (K Tons)
         </text>
 
-        {/* Grid lines */}
+        {/* Horizontal Grid lines */}
         {steps.map((pct, idx) => {
-          const val = Math.round(maxAxis * pct * 10) / 10;
+          const val = Math.round(maxAxis * pct);
           const y = baseY - pct * chartHeight;
           return (
             <g key={idx}>
               <line
-                x1="85"
+                x1="90"
                 y1={y}
-                x2="890"
+                x2="1050"
                 y2={y}
-                className={idx === 0 ? undefined : 'grid-line'}
+                className={idx === 0 ? 'axis-baseline' : 'grid-line-clean'}
                 stroke={idx === 0 ? 'var(--text-title)' : undefined}
-                strokeWidth={idx === 0 ? 1.8 : undefined}
-                opacity={idx === 0 ? 0.6 : undefined}
+                strokeWidth={idx === 0 ? 1.8 : 1}
+                opacity={idx === 0 ? 0.7 : undefined}
               />
-              <text x="75" y={y + 5} className="axis-y-text">
+              <text x="80" y={y + 5} className="axis-y-text-clean">
                 {val}
               </text>
             </g>
           );
         })}
 
-        {/* 6 Bars */}
+        {/* 6 BARS */}
         {bars.map((bar) => {
-          const h = getHeight(bar.val);
-          const y = getY(bar.val);
-          const centerX = bar.x + 40;
+          const isVisible = subStep >= bar.stepRequired;
+          const h = isVisible ? getHeight(bar.val) : 0;
+          const y = isVisible ? getY(bar.val) : baseY;
+          const centerX = bar.x + 45;
 
           return (
-            <g key={bar.label} className="bar-group">
+            <g
+              key={bar.id}
+              className={`bar-group-clean ${isVisible ? 'is-bar-visible' : 'is-bar-hidden'}`}
+              style={{
+                transition: 'opacity 0.4s ease',
+                opacity: isVisible ? 1 : 0.08,
+              }}
+            >
+              {/* Optional Ghost placeholder line when bar is not yet revealed */}
+              {!isVisible && (
+                <rect
+                  x={bar.x}
+                  y={baseY - 4}
+                  width="90"
+                  height="4"
+                  rx="2"
+                  fill="rgba(100, 116, 139, 0.25)"
+                />
+              )}
+
+              {/* Main Bar Rectangle */}
               <rect
-                className="chart-bar-rect"
+                className="chart-bar-rect-clean"
                 x={bar.x}
                 y={y}
-                width="80"
+                width="90"
                 height={h}
                 fill={bar.grad}
+                style={{
+                  transition: 'y 0.6s cubic-bezier(0.16, 1, 0.3, 1), height 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
+                }}
               />
-              <text className="bar-value-text" x={centerX} y={y - 12}>
-                {bar.val}
-              </text>
+
+              {/* Value Text Above Bar */}
+              {isVisible && (
+                <text
+                  className="bar-value-text-clean"
+                  x={centerX}
+                  y={y - 14}
+                  style={{
+                    animation: 'fadeInUp 0.4s ease-out forwards',
+                  }}
+                >
+                  {bar.val}
+                </text>
+              )}
+
+              {/* Sequence Order Badge Pill Above Bar */}
+              {isVisible && (
+                <g transform={`translate(${centerX - 24}, ${y - 42})`}>
+                  <rect
+                    width="48"
+                    height="18"
+                    rx="9"
+                    fill="var(--card-bg)"
+                    stroke={bar.colorHex}
+                    strokeWidth="1.2"
+                  />
+                  <text
+                    x="24"
+                    y="13"
+                    textAnchor="middle"
+                    fontFamily="Outfit, sans-serif"
+                    fontSize="10"
+                    fontWeight="800"
+                    fill={bar.colorHex}
+                  >
+                    Paso {bar.stepRequired}
+                  </text>
+                </g>
+              )}
+
+              {/* X Axis Label Below Baseline */}
               <text
-                className="axis-x-label"
+                className="axis-x-label-clean"
                 x={centerX}
-                y="438"
-                style={{ fill: bar.isTarget ? '#15803d' : undefined }}
+                y="436"
+                style={{
+                  fill: bar.isTarget ? '#16a34a' : isVisible ? 'var(--text-title)' : 'var(--text-muted)',
+                  fontWeight: isVisible ? 800 : 600,
+                  transition: 'fill 0.3s ease',
+                }}
               >
                 {bar.label}
               </text>
@@ -144,31 +282,44 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
           );
         })}
 
-        {/* Delta Callout Box */}
-        <g className="delta-callout-bubble">
+        {/* Delta Callout Box (+6 Mil Tons / +8.1%) between Bar Q3 '25 and Q3 '26 */}
+        <g
+          className="delta-callout-clean"
+          style={{
+            opacity: showDeltaCallout ? 1 : 0,
+            pointerEvents: showDeltaCallout ? 'auto' : 'none',
+            transform: showDeltaCallout ? 'translateY(0)' : 'translateY(15px)',
+            transition: 'opacity 0.45s ease, transform 0.45s cubic-bezier(0.16, 1, 0.3, 1)',
+          }}
+        >
+          {/* Connector Path from Bar 2 to Callout to Bar 3 */}
           <path
-            d={`M 285,${bar2Top - 15} L 348,${calloutBoxY + 50} L 410,${bar3Top - 15}`}
+            d={`M 335,${bar2Top - 12} L 410,${calloutBoxY + 54} L 485,${bar3Top - 12}`}
             fill="none"
             stroke="var(--text-title)"
-            strokeWidth="1.6"
+            strokeWidth="1.8"
+            strokeDasharray="4 3"
             opacity="0.65"
           />
+
+          {/* Floating Glass Pill Callout */}
           <rect
-            x="290"
+            x="345"
             y={calloutBoxY}
-            width="120"
-            height="46"
-            rx="8"
+            width="130"
+            height="50"
+            rx="12"
             fill="var(--card-bg)"
             stroke="#0284c7"
-            strokeWidth="1.4"
-            filter="url(#callout-shadow)"
+            strokeWidth="1.6"
+            filter="url(#clean-card-shadow)"
           />
+
           <text
-            x="350"
-            y={calloutBoxY + 19}
+            x="410"
+            y={calloutBoxY + 21}
             fontFamily="Outfit, sans-serif"
-            fontSize="12.5"
+            fontSize="13.5"
             fontWeight="900"
             fill="var(--text-title)"
             textAnchor="middle"
@@ -176,11 +327,11 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
             + {trajectory.delta_tons} Mil Tons
           </text>
           <text
-            x="350"
-            y={calloutBoxY + 36}
+            x="410"
+            y={calloutBoxY + 40}
             fontFamily="Outfit, sans-serif"
-            fontSize="12"
-            fontWeight="800"
+            fontSize="13"
+            fontWeight="900"
             fill="#059669"
             textAnchor="middle"
           >
@@ -189,42 +340,22 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
         </g>
       </svg>
 
-      {/* Target Badge */}
+      {/* Target Badge (appears from step 2 onwards) */}
       <div
+        className="target-badge-clean"
         style={{
-          position: 'absolute',
-          bottom: '16px',
-          right: '24px',
-          background: 'var(--glass-badge-bg)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(21, 128, 61, 0.3)',
-          borderRadius: '12px',
-          padding: '8px 14px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px',
-          boxShadow: 'var(--card-shadow)',
+          opacity: showTargetBadge ? 1 : 0,
+          transform: showTargetBadge ? 'translateY(0)' : 'translateY(12px)',
+          pointerEvents: showTargetBadge ? 'auto' : 'none',
+          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
         }}
       >
-        <div
-          style={{
-            width: '32px',
-            height: '32px',
-            borderRadius: '8px',
-            background: 'rgba(21, 128, 61, 0.15)',
-            color: '#15803d',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <Flag size={16} />
+        <div className="target-badge-icon">
+          <Flag size={18} />
         </div>
-        <div>
-          <div style={{ fontSize: '12px', fontWeight: 800, color: '#15803d' }}>
-            Meta Anual 2026
-          </div>
-          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>
+        <div className="target-badge-content">
+          <div className="target-badge-title">Meta Anual 2026</div>
+          <div className="target-badge-sub">
             {trajectory.cierre26}K Tons Proyectadas
           </div>
         </div>
