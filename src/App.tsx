@@ -35,19 +35,21 @@ export const App: React.FC = () => {
     setIsTouring(false);
   }, []);
 
-  // Global Keyboard Navigation (ArrowLeft / ArrowRight)
+  // Global Keyboard Navigation (ArrowLeft / ArrowRight / Escape)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight' || e.key === 'PageDown') {
         handleNext();
       } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
         handlePrev();
+      } else if (e.key === 'Escape') {
+        handleReset();
       }
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleNext, handlePrev]);
+  }, [handleNext, handlePrev, handleReset]);
 
   // Auto-tour timer
   useEffect(() => {

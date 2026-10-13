@@ -33,9 +33,11 @@ export const PeruVectorMap: React.FC<PeruVectorMapProps> = ({
                 d={dept.d}
                 style={{
                   fill: isHighlighted ? brandColor : undefined,
-                  fillOpacity: isHighlighted ? 0.45 : selectedDistributor ? 0.12 : undefined,
+                  fillOpacity: isHighlighted ? 0.35 : selectedDistributor ? 0.08 : undefined,
                   stroke: isHighlighted ? brandColor : undefined,
-                  strokeWidth: isHighlighted ? 2.2 : undefined,
+                  strokeWidth: isHighlighted ? 1.3 : undefined,
+                  strokeLinejoin: 'round',
+                  strokeLinecap: 'round',
                 }}
               >
                 <title>{dept.name}</title>
@@ -71,13 +73,14 @@ export const PeruVectorMap: React.FC<PeruVectorMapProps> = ({
                 onMouseLeave={() => onHoverCity(null)}
               >
                 <g className="marker-graphics">
-                  <circle className="radar-pulse" cx="0" cy="0" r="15" />
-                  <circle className="marker-glow" cx="0" cy="0" r="8" />
+                  {belongs && selectedDistributor && (
+                    <circle className="radar-pulse" cx="0" cy="0" r="12" />
+                  )}
                   <circle
                     className="marker-dot"
                     cx="0"
                     cy="0"
-                    r={belongs && selectedDistributor ? 7.5 : city.dotRadius}
+                    r={belongs && selectedDistributor ? 5.2 : city.dotRadius}
                     style={{
                       fill:
                         belongs && selectedDistributor
@@ -86,7 +89,7 @@ export const PeruVectorMap: React.FC<PeruVectorMapProps> = ({
                           ? 'var(--accent-crimson)'
                           : undefined,
                       stroke: belongs && selectedDistributor ? '#ffffff' : undefined,
-                      strokeWidth: belongs && selectedDistributor ? 2.8 : undefined,
+                      strokeWidth: belongs && selectedDistributor ? 1.8 : undefined,
                     }}
                   />
                   <text
