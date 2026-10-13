@@ -1,18 +1,23 @@
 {
   "name": "red-distribucion-peru",
+  "private": true,
   "version": "1.0.0",
-  "description": "Presentación Ejecutiva Interactiva - Red Nacional de Distribución Comercial",
-  "main": "index.html",
+  "type": "module",
   "scripts": {
-    "start": "npx serve ."
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
   },
-  "keywords": [
-    "peru",
-    "interactive-map",
-    "presentation",
-    "dashboard",
-    "executive"
-  ],
-  "author": "Gustavo Huaman",
-  "license": "MIT"
+  "dependencies": {
+    "lucide-react": "^1.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "typescript": "^5.7.3",
+    "vite": "^6.1.0"
+  }
 }
