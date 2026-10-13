@@ -15,8 +15,10 @@
 /* 3. Diapositiva 3: Crecimiento por Tienda (Barras Divergentes Horizontal) */
 @import './slide3.css';
 
-/* Futuras Diapositivas Intermedias (Slide 4, 5...) preparadas para importación */
-/* @import './slide4.css'; */
+/* 4. Diapositiva 4: Crecimiento YTD por Grupo (Barras Horizontales & Matriz) */
+@import './slide4.css';
+
+/* Futuras Diapositivas Intermedias (Slide 5...) preparadas para importación */
 /* @import './slide5.css'; */
 
 /* Diapositiva Final Obligatoria: ¡Muchas Gracias! (Siempre al final de todas) */

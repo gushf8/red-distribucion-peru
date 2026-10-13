@@ -33,13 +33,16 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({
     if (currentSlide === 1) return 'RED NACIONAL';
     if (currentSlide === 2) return 'TRAYECTORIA NACIONAL';
     if (currentSlide === 3) return 'CRECIMIENTO POR TIENDA';
+    if (currentSlide === 4) return 'CRECIMIENTO POR GRUPO';
     return `MÓDULO ${currentSlide}`;
   };
 
   const getTitle = () => {
     if (isClosingSlide) return '¡Muchas Gracias!';
     if (currentSlide === 1) return 'Presencia a lo largo del Perú';
-    if (currentSlide === 2 || currentSlide === 3) return 'El reto de la gerencia distribuidores';
+    if (currentSlide === 2 || currentSlide === 3 || currentSlide === 4) {
+      return 'El reto de la gerencia distribuidores';
+    }
     return `Sección ${currentSlide}`;
   };
 
@@ -54,7 +57,10 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({
       return `Lo construimos juntos · Consolidado General · Fase ${subStep} de 6`;
     }
     if (currentSlide === 3) {
-      return 'Crecimiento por Tienda · Variación % vs. periodo anterior · 14 Plazas Evaluadas';
+      return 'Crecimiento por Tienda · Variación % vs. periodo anterior · 14 Tiendas Evaluadas';
+    }
+    if (currentSlide === 4) {
+      return 'Crecimiento YTD por grupo · 9 Grupos Comerciales Evaluados · Meta Consolidada +8%';
     }
     return '';
   };
