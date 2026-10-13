@@ -1,6 +1,5 @@
 import React from 'react';
 import { DistributorTrajectory } from '../../types/presentation';
-import { Flag } from 'lucide-react';
 
 interface TrajectoryBarChartProps {
   trajectory: DistributorTrajectory;
@@ -12,8 +11,8 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
   subStep,
 }) => {
   const maxAxis = 140;
-  const baseY = 410;
-  const topY = 55;
+  const baseY = 415;
+  const topY = 60;
   const chartHeight = baseY - topY; // 355px
 
   const getY = (val: number) => baseY - (val / maxAxis) * chartHeight;
@@ -30,7 +29,6 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
       grad: 'url(#grad-spring-lime)',
       stepRequired: 1,
       colorHex: '#84cc16',
-      subtitle: 'Año previo',
     },
     {
       id: 'q3_25',
@@ -40,7 +38,6 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
       grad: 'url(#grad-deep-navy)',
       stepRequired: 3,
       colorHex: '#0f2b48',
-      subtitle: 'Periodo base',
     },
     {
       id: 'q3_26',
@@ -50,7 +47,6 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
       grad: 'url(#grad-ocean-blue)',
       stepRequired: 4,
       colorHex: '#0284c7',
-      subtitle: 'Avance actual',
     },
     {
       id: 'oct26',
@@ -60,7 +56,6 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
       grad: 'url(#grad-sky-cyan)',
       stepRequired: 5,
       colorHex: '#38bdf8',
-      subtitle: 'Proyección 1',
     },
     {
       id: 'nov26',
@@ -70,7 +65,6 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
       grad: 'url(#grad-azure-blue)',
       stepRequired: 6,
       colorHex: '#60a5fa',
-      subtitle: 'Proyección 2',
     },
     {
       id: 'cierre26',
@@ -81,7 +75,6 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
       stepRequired: 2,
       isTarget: true,
       colorHex: '#22c55e',
-      subtitle: 'Meta Anual',
     },
   ];
 
@@ -89,12 +82,12 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
   const steps = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
 
   // Coordinates for Delta Callout between Bar Q3 '25 (x: 290) and Bar Q3 '26 (x: 440)
-  const bar2Top = getY(trajectory.q3_25);
-  const bar3Top = getY(trajectory.q3_26);
-  const calloutBoxY = Math.min(bar2Top, bar3Top) - 72;
+  const bar2Top = getY(trajectory.q3_25); // ~227
+  const bar3Top = getY(trajectory.q3_26); // ~212
+  // Callout Box placed well above with NO overlap over the numbers 74 or 80
+  const calloutBoxY = 118;
 
   const showDeltaCallout = subStep >= 4;
-  const showTargetBadge = subStep >= 2;
 
   return (
     <div className="chart-canvas-area-clean">
@@ -148,7 +141,7 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
           </linearGradient>
 
           <filter id="clean-card-shadow" x="-30%" y="-30%" width="160%" height="160%">
-            <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#071530" floodOpacity="0.14" />
+            <feDropShadow dx="0" dy="6" stdDeviation="8" floodColor="#071530" floodOpacity="0.12" />
           </filter>
         </defs>
 
@@ -201,7 +194,7 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
                 opacity: isVisible ? 1 : 0.08,
               }}
             >
-              {/* Optional Ghost placeholder line when bar is not yet revealed */}
+              {/* Ghost baseline placeholder when bar is not yet revealed */}
               {!isVisible && (
                 <rect
                   x={bar.x}
@@ -226,7 +219,7 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
                 }}
               />
 
-              {/* Value Text Above Bar */}
+              {/* Value Text Above Bar (Clean, spacious, NO overlapping buttons) */}
               {isVisible && (
                 <text
                   className="bar-value-text-clean"
@@ -240,36 +233,11 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
                 </text>
               )}
 
-              {/* Sequence Order Badge Pill Above Bar */}
-              {isVisible && (
-                <g transform={`translate(${centerX - 24}, ${y - 42})`}>
-                  <rect
-                    width="48"
-                    height="18"
-                    rx="9"
-                    fill="var(--card-bg)"
-                    stroke={bar.colorHex}
-                    strokeWidth="1.2"
-                  />
-                  <text
-                    x="24"
-                    y="13"
-                    textAnchor="middle"
-                    fontFamily="Outfit, sans-serif"
-                    fontSize="10"
-                    fontWeight="800"
-                    fill={bar.colorHex}
-                  >
-                    Paso {bar.stepRequired}
-                  </text>
-                </g>
-              )}
-
               {/* X Axis Label Below Baseline */}
               <text
                 className="axis-x-label-clean"
                 x={centerX}
-                y="436"
+                y="442"
                 style={{
                   fill: bar.isTarget ? '#16a34a' : isVisible ? 'var(--text-title)' : 'var(--text-muted)',
                   fontWeight: isVisible ? 800 : 600,
@@ -282,7 +250,7 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
           );
         })}
 
-        {/* Delta Callout Box (+6 Mil Tons / +8.1%) between Bar Q3 '25 and Q3 '26 */}
+        {/* Delta Callout Box (+6 Mil Tons / +8.1%) - Elevated to avoid touching numbers 74 and 80 */}
         <g
           className="delta-callout-clean"
           style={{
@@ -294,12 +262,12 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
         >
           {/* Connector Path from Bar 2 to Callout to Bar 3 */}
           <path
-            d={`M 335,${bar2Top - 12} L 410,${calloutBoxY + 54} L 485,${bar3Top - 12}`}
+            d={`M 335,${bar2Top - 28} L 410,${calloutBoxY + 54} L 485,${bar3Top - 28}`}
             fill="none"
             stroke="var(--text-title)"
             strokeWidth="1.8"
             strokeDasharray="4 3"
-            opacity="0.65"
+            opacity="0.6"
           />
 
           {/* Floating Glass Pill Callout */}
@@ -340,26 +308,6 @@ export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
         </g>
       </svg>
 
-      {/* Target Badge (appears from step 2 onwards) */}
-      <div
-        className="target-badge-clean"
-        style={{
-          opacity: showTargetBadge ? 1 : 0,
-          transform: showTargetBadge ? 'translateY(0)' : 'translateY(12px)',
-          pointerEvents: showTargetBadge ? 'auto' : 'none',
-          transition: 'all 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-      >
-        <div className="target-badge-icon">
-          <Flag size={18} />
-        </div>
-        <div className="target-badge-content">
-          <div className="target-badge-title">Meta Anual 2026</div>
-          <div className="target-badge-sub">
-            {trajectory.cierre26}K Tons Proyectadas
-          </div>
-        </div>
-      </div>
     </div>
   );
 };

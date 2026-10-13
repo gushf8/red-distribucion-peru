@@ -1,7 +1,7 @@
 import React from 'react';
 import { CONSOLIDATED_TRAJECTORY } from '../../data/distributors';
 import { TrajectoryBarChart } from './TrajectoryBarChart';
-import { TrendingUp, Sparkles, ChevronRight, ChevronLeft, RotateCcw } from 'lucide-react';
+import { TrendingUp, Sparkles, ChevronRight, ChevronLeft, RotateCcw, Flag } from 'lucide-react';
 
 interface TrajectorySlideProps {
   subStep: number;
@@ -42,62 +42,77 @@ export const TrajectorySlide: React.FC<TrajectorySlideProps> = ({
             </div>
           </div>
 
-          {/* INTERACTIVE SEQUENTIAL STEP SELECTOR */}
-          <div className="step-pill-controller" title="Secuencia narrativa de barras (Flechas ← y →)">
-            <button
-              className="btn-step-arrow"
-              onClick={onPrevStep}
-              disabled={subStep <= 1}
-              title="Paso anterior (Flecha Izquierda ←)"
-            >
-              <ChevronLeft size={16} />
-            </button>
+          {/* ACTIONS CLUSTER (TARGET BADGE + STEP CONTROLLER) */}
+          <div className="top-bar-actions-cluster">
+            {subStep >= 2 && (
+              <div className="target-badge-pill" title="Meta Anual 2026: 120K Tons Proyectadas">
+                <div className="target-badge-pill-icon">
+                  <Flag size={14} />
+                </div>
+                <div className="target-badge-pill-text">
+                  <span className="pill-target-label">Meta Anual 2026:</span>
+                  <span className="pill-target-val">120K Tons</span>
+                </div>
+              </div>
+            )}
 
-            <div className="step-pill-group">
-              {STEP_DESCRIPTIONS.map((item) => (
-                <button
-                  key={item.step}
-                  className={`btn-step-pill ${subStep === item.step ? 'is-active-step' : ''} ${
-                    subStep > item.step ? 'is-passed-step' : ''
-                  }`}
-                  onClick={() => onSetSubStep(item.step)}
-                  title={`${item.title}: ${item.detail}`}
-                >
-                  <span className="step-dot" />
-                  <span className="step-num">Paso {item.step}</span>
-                </button>
-              ))}
-
+            {/* INTERACTIVE SEQUENTIAL STEP SELECTOR */}
+            <div className="step-pill-controller" title="Secuencia narrativa de barras (Flechas ← y →)">
               <button
-                className={`btn-step-pill ${subStep === 6 ? 'is-complete-pill' : ''}`}
-                onClick={() => onSetSubStep(6)}
-                title="Mostrar todas las barras"
+                className="btn-step-arrow"
+                onClick={onPrevStep}
+                disabled={subStep <= 1}
+                title="Paso anterior (Flecha Izquierda ←)"
               >
-                <Sparkles size={13} />
-                <span>Ver Completo</span>
+                <ChevronLeft size={16} />
               </button>
 
+              <div className="step-pill-group">
+                {STEP_DESCRIPTIONS.map((item) => (
+                  <button
+                    key={item.step}
+                    className={`btn-step-pill ${subStep === item.step ? 'is-active-step' : ''} ${
+                      subStep > item.step ? 'is-passed-step' : ''
+                    }`}
+                    onClick={() => onSetSubStep(item.step)}
+                    title={`${item.title}: ${item.detail}`}
+                  >
+                    <span className="step-dot" />
+                    <span className="step-num">Paso {item.step}</span>
+                  </button>
+                ))}
+
+                <button
+                  className={`btn-step-pill ${subStep === 6 ? 'is-complete-pill' : ''}`}
+                  onClick={() => onSetSubStep(6)}
+                  title="Mostrar todas las barras"
+                >
+                  <Sparkles size={13} />
+                  <span>Ver Completo</span>
+                </button>
+
+                <button
+                  className="btn-step-pill btn-step-reset"
+                  onClick={() => onSetSubStep(1)}
+                  title="Reiniciar a Paso 1"
+                >
+                  <RotateCcw size={12} />
+                </button>
+              </div>
+
               <button
-                className="btn-step-pill btn-step-reset"
-                onClick={() => onSetSubStep(1)}
-                title="Reiniciar a Paso 1"
+                className="btn-step-arrow"
+                onClick={onNextStep}
+                disabled={subStep >= 6}
+                title="Siguiente paso (Flecha Derecha →)"
               >
-                <RotateCcw size={12} />
+                <ChevronRight size={16} />
               </button>
             </div>
-
-            <button
-              className="btn-step-arrow"
-              onClick={onNextStep}
-              disabled={subStep >= 6}
-              title="Siguiente paso (Flecha Derecha →)"
-            >
-              <ChevronRight size={16} />
-            </button>
           </div>
         </div>
 
-        {/* CURRENT STEP NARRATIVE BADGE */}
+        {/* CURRENT STEP NARRATIVE BANNER */}
         <div className="step-narrative-banner">
           <span className="step-narrative-tag">Fase Activa {subStep}/6:</span>
           <span className="step-narrative-text">
