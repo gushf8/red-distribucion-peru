@@ -78,7 +78,7 @@ export const TrajectorySlide: React.FC<TrajectorySlideProps> = ({
                     title={`${item.title}: ${item.detail}`}
                   >
                     <span className="step-dot" />
-                    <span className="step-num">Paso {item.step}</span>
+                    <span className="step-num">{item.step}</span>
                   </button>
                 ))}
 

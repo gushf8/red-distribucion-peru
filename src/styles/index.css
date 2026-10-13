@@ -1,6 +1,6 @@
 /* =========================================================================
    MASTER STYLESHEET ENTRYPOINT - RED ESTRATÉGICA PERÚ
-   Modular architecture by slides (Slide 1, Slide 2, Slide 3, Slide 4, ...)
+   Modular architecture by slides (Slide 1, Slide 2, Slide 3, Slide 4, ..., Closing)
    ========================================================================= */
 
 /* 0. Base Tokens, Variables, Presentation Viewport & Shell Layout */
@@ -12,7 +12,9 @@
 /* 2. Diapositiva 2: El Reto de la Gerencia Distribuidores (Trayectoria General) */
 @import './slide2.css';
 
-/* Futuras Diapositivas (3, 4, 5...) preparadas para importación modular */
+/* Futuras Diapositivas Intermedias (Slide 3, 4, 5...) preparadas para importación */
 /* @import './slide3.css'; */
 /* @import './slide4.css'; */
-/* @import './slide5.css'; */
+
+/* Diapositiva Final Obligatoria: ¡Muchas Gracias! (Siempre al final de todas) */
+@import './slideClosing.css';

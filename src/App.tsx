@@ -4,15 +4,21 @@ import { Distributor } from './types/presentation';
 import { SlideHeader } from './components/layout/SlideHeader';
 import { MapSlide } from './components/slide1/MapSlide';
 import { TrajectorySlide } from './components/slide2/TrajectorySlide';
+import { ClosingSlide } from './components/slideClosing/ClosingSlide';
 
 export const App: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState<number>(1);
   const [subStep, setSubStep] = useState<number>(1); // 1 to 6 on Slide 2
-  const [isDark, setIsDark] = useState<boolean>(false); // Light theme is default!
+  const [isDark, setIsDark] = useState<boolean>(false); // Light theme is default
   const [selectedDistributor, setSelectedDistributor] = useState<Distributor | null>(null);
   const [isTouring, setIsTouring] = useState<boolean>(false);
 
-  const totalSlides = 2;
+  // ARCHITECTURE: Content slides count.
+  // Whenever new intermediate slides are added (slide 3, slide 4...),
+  // closingSlideIndex is ALWAYS dynamically set to the very end!
+  const contentSlidesCount = 2; // Slide 1 (Mapa), Slide 2 (Trayectoria)
+  const closingSlideIndex = contentSlidesCount + 1; // Slide 3 (¡Muchas Gracias!)
+  const totalSlides = closingSlideIndex;
 
   // Sync theme-dark class to document.body
   useEffect(() => {
@@ -23,7 +29,7 @@ export const App: React.FC = () => {
     }
   }, [isDark]);
 
-  // Next: on Slide 1 -> Slide 2 Step 1; on Slide 2 -> Step 2..6 -> Slide 1
+  // Navigate Forward (Next)
   const handleNext = useCallback(() => {
     if (currentSlide === 1) {
       setCurrentSlide(2);
@@ -32,25 +38,37 @@ export const App: React.FC = () => {
       if (subStep < 6) {
         setSubStep((prev) => prev + 1);
       } else {
-        setCurrentSlide(1);
-        setSubStep(1);
+        // Move to the next slide (which is Closing slide or next intermediate)
+        setCurrentSlide(3);
       }
+    } else if (currentSlide < closingSlideIndex) {
+      setCurrentSlide((prev) => prev + 1);
+    } else {
+      // Loop from closing slide back to slide 1
+      setCurrentSlide(1);
+      setSubStep(1);
     }
-  }, [currentSlide, subStep]);
+  }, [currentSlide, subStep, closingSlideIndex]);
 
-  // Prev: on Slide 2 -> Step 6..1 -> Slide 1; on Slide 1 -> Slide 2 Step 6
+  // Navigate Backward (Prev)
   const handlePrev = useCallback(() => {
-    if (currentSlide === 2) {
+    if (currentSlide === closingSlideIndex) {
+      // Return to Slide 2 with all bars visible (step 6)
+      setCurrentSlide(2);
+      setSubStep(6);
+    } else if (currentSlide === 2) {
       if (subStep > 1) {
         setSubStep((prev) => prev - 1);
       } else {
         setCurrentSlide(1);
       }
+    } else if (currentSlide > 2) {
+      setCurrentSlide((prev) => prev - 1);
     } else if (currentSlide === 1) {
-      setCurrentSlide(2);
-      setSubStep(6);
+      // Optional loop backwards to closing slide
+      setCurrentSlide(closingSlideIndex);
     }
-  }, [currentSlide, subStep]);
+  }, [currentSlide, subStep, closingSlideIndex]);
 
   const handleReset = useCallback(() => {
     setSelectedDistributor(null);
@@ -59,6 +77,13 @@ export const App: React.FC = () => {
       setSubStep(1);
     }
   }, [currentSlide]);
+
+  const handleRestartToSlide1 = useCallback(() => {
+    setCurrentSlide(1);
+    setSubStep(1);
+    setSelectedDistributor(null);
+    setIsTouring(false);
+  }, []);
 
   // Global Keyboard Navigation (ArrowLeft / ArrowRight / Escape)
   useEffect(() => {
@@ -109,6 +134,7 @@ export const App: React.FC = () => {
       />
 
       <div className="slides-wrapper">
+        {/* SLIDE 1: MAPA NACIONAL */}
         <section
           className={`slide-page ${currentSlide === 1 ? 'is-active-slide' : ''}`}
           id="slide-1"
@@ -122,6 +148,7 @@ export const App: React.FC = () => {
           />
         </section>
 
+        {/* SLIDE 2: TRAYECTORIA BARRAS GENERAL */}
         <section
           className={`slide-page ${currentSlide === 2 ? 'is-active-slide' : ''}`}
           id="slide-2"
@@ -132,6 +159,14 @@ export const App: React.FC = () => {
             onNextStep={() => setSubStep((prev) => Math.min(6, prev + 1))}
             onPrevStep={() => setSubStep((prev) => Math.max(1, prev - 1))}
           />
+        </section>
+
+        {/* SLIDE FINAL (SIEMPRE AL FINAL): ¡MUCHAS GRACIAS! */}
+        <section
+          className={`slide-page ${currentSlide === closingSlideIndex ? 'is-active-slide' : ''}`}
+          id="slide-closing"
+        >
+          <ClosingSlide onRestart={handleRestartToSlide1} />
         </section>
       </div>
     </div>
