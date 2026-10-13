@@ -12,9 +12,12 @@
 /* 2. Diapositiva 2: El Reto de la Gerencia Distribuidores (Trayectoria General) */
 @import './slide2.css';
 
-/* Futuras Diapositivas Intermedias (Slide 3, 4, 5...) preparadas para importación */
-/* @import './slide3.css'; */
+/* 3. Diapositiva 3: Crecimiento por Tienda (Barras Divergentes Horizontal) */
+@import './slide3.css';
+
+/* Futuras Diapositivas Intermedias (Slide 4, 5...) preparadas para importación */
 /* @import './slide4.css'; */
+/* @import './slide5.css'; */
 
 /* Diapositiva Final Obligatoria: ¡Muchas Gracias! (Siempre al final de todas) */
 @import './slideClosing.css';

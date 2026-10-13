@@ -4,6 +4,7 @@ import { Distributor } from './types/presentation';
 import { SlideHeader } from './components/layout/SlideHeader';
 import { MapSlide } from './components/slide1/MapSlide';
 import { TrajectorySlide } from './components/slide2/TrajectorySlide';
+import { StoreGrowthSlide } from './components/slide3/StoreGrowthSlide';
 import { ClosingSlide } from './components/slideClosing/ClosingSlide';
 
 export const App: React.FC = () => {
@@ -14,10 +15,10 @@ export const App: React.FC = () => {
   const [isTouring, setIsTouring] = useState<boolean>(false);
 
   // ARCHITECTURE: Content slides count.
-  // Whenever new intermediate slides are added (slide 3, slide 4...),
+  // Whenever new intermediate slides are added (slide 4, slide 5...),
   // closingSlideIndex is ALWAYS dynamically set to the very end!
-  const contentSlidesCount = 2; // Slide 1 (Mapa), Slide 2 (Trayectoria)
-  const closingSlideIndex = contentSlidesCount + 1; // Slide 3 (¡Muchas Gracias!)
+  const contentSlidesCount = 3; // Slide 1 (Mapa), Slide 2 (Trayectoria), Slide 3 (Crecimiento por Tienda)
+  const closingSlideIndex = contentSlidesCount + 1; // Slide 4 (¡Muchas Gracias!)
   const totalSlides = closingSlideIndex;
 
   // Sync theme-dark class to document.body
@@ -38,9 +39,12 @@ export const App: React.FC = () => {
       if (subStep < 6) {
         setSubStep((prev) => prev + 1);
       } else {
-        // Move to the next slide (which is Closing slide or next intermediate)
+        // Move to Slide 3 (Crecimiento por Tienda)
         setCurrentSlide(3);
       }
+    } else if (currentSlide === 3) {
+      // Move to Slide 4 (Closing Slide ¡Muchas Gracias!)
+      setCurrentSlide(4);
     } else if (currentSlide < closingSlideIndex) {
       setCurrentSlide((prev) => prev + 1);
     } else {
@@ -53,6 +57,9 @@ export const App: React.FC = () => {
   // Navigate Backward (Prev)
   const handlePrev = useCallback(() => {
     if (currentSlide === closingSlideIndex) {
+      // Return to Slide 3 (or the previous content slide)
+      setCurrentSlide(3);
+    } else if (currentSlide === 3) {
       // Return to Slide 2 with all bars visible (step 6)
       setCurrentSlide(2);
       setSubStep(6);
@@ -62,8 +69,6 @@ export const App: React.FC = () => {
       } else {
         setCurrentSlide(1);
       }
-    } else if (currentSlide > 2) {
-      setCurrentSlide((prev) => prev - 1);
     } else if (currentSlide === 1) {
       // Optional loop backwards to closing slide
       setCurrentSlide(closingSlideIndex);
@@ -159,6 +164,14 @@ export const App: React.FC = () => {
             onNextStep={() => setSubStep((prev) => Math.min(6, prev + 1))}
             onPrevStep={() => setSubStep((prev) => Math.max(1, prev - 1))}
           />
+        </section>
+
+        {/* SLIDE 3: CRECIMIENTO POR TIENDA (BARRAS DIVERGENTES) */}
+        <section
+          className={`slide-page ${currentSlide === 3 ? 'is-active-slide' : ''}`}
+          id="slide-3"
+        >
+          <StoreGrowthSlide />
         </section>
 
         {/* SLIDE FINAL (SIEMPRE AL FINAL): ¡MUCHAS GRACIAS! */}

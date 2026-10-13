@@ -32,13 +32,14 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({
     if (isClosingSlide) return 'AGRADECIMIENTO';
     if (currentSlide === 1) return 'RED NACIONAL';
     if (currentSlide === 2) return 'TRAYECTORIA NACIONAL';
+    if (currentSlide === 3) return 'CRECIMIENTO POR TIENDA';
     return `MÓDULO ${currentSlide}`;
   };
 
   const getTitle = () => {
     if (isClosingSlide) return '¡Muchas Gracias!';
     if (currentSlide === 1) return 'Presencia a lo largo del Perú';
-    if (currentSlide === 2) return 'El reto de la gerencia distribuidores';
+    if (currentSlide === 2 || currentSlide === 3) return 'El reto de la gerencia distribuidores';
     return `Sección ${currentSlide}`;
   };
 
@@ -51,6 +52,9 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({
     }
     if (currentSlide === 2) {
       return `Lo construimos juntos · Consolidado General · Fase ${subStep} de 6`;
+    }
+    if (currentSlide === 3) {
+      return 'Crecimiento por Tienda · Variación % vs. periodo anterior · 14 Plazas Evaluadas';
     }
     return '';
   };

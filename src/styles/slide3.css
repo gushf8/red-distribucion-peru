@@ -1,0 +1,209 @@
+/* =========================================================================
+   SLIDE 3: CRECIMIENTO POR TIENDA (BARRAS DIVERGENTES HORIZONTALES)
+   Variación % vs. periodo anterior - Línea visual ejecutiva
+   ========================================================================= */
+.deck-grid-slide3 {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+}
+
+.growth-chart-card-full {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: var(--card-shadow);
+  padding: 16px 26px 18px 26px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.growth-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  flex-shrink: 0;
+}
+
+.growth-header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.growth-main-title {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-title);
+  letter-spacing: -0.4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.growth-sub-tag-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.growth-sub-tag {
+  font-size: 13px;
+  font-weight: 700;
+  font-style: italic;
+  color: #0284c7;
+}
+
+body.theme-dark .growth-sub-tag { color: #38bdf8; }
+
+.growth-sub-meta {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+/* KPI Highlights Cluster on Top Right */
+.growth-kpi-cluster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.growth-pill-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 8px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.pill-growth-positive {
+  background: rgba(16, 185, 129, 0.1);
+  color: #059669;
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+body.theme-dark .pill-growth-positive {
+  background: rgba(52, 211, 153, 0.15);
+  color: #34d399;
+  border-color: rgba(52, 211, 153, 0.3);
+}
+
+.pill-growth-negative {
+  background: rgba(225, 29, 72, 0.1);
+  color: #e11d48;
+  border-color: rgba(225, 29, 72, 0.25);
+}
+
+body.theme-dark .pill-growth-negative {
+  background: rgba(251, 113, 133, 0.15);
+  color: #fb7185;
+  border-color: rgba(251, 113, 133, 0.3);
+}
+
+.pill-growth-avg {
+  background: rgba(2, 132, 199, 0.08);
+  color: var(--accent-blue);
+  border-color: rgba(2, 132, 199, 0.22);
+}
+
+body.theme-dark .pill-growth-avg {
+  background: rgba(56, 189, 248, 0.12);
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+/* SVG Divergent Bar Chart Area */
+.growth-canvas-area {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  padding: 2px 0;
+}
+
+.growth-svg-element {
+  width: 100%;
+  height: 100%;
+  max-height: 100%;
+  overflow: visible;
+}
+
+/* Row Hover & Animation */
+.growth-row-group {
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.growth-row-group:hover .growth-bar-rect {
+  filter: brightness(1.1) drop-shadow(0 2px 6px rgba(0, 0, 0, 0.15));
+}
+
+.growth-row-group:hover .growth-store-label {
+  fill: var(--accent-blue);
+  font-weight: 900;
+}
+
+.growth-bar-rect {
+  rx: 4px;
+  ry: 4px;
+  transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1), x 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.growth-store-label {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+  fill: var(--text-title);
+  text-anchor: end;
+  transition: fill 0.2s ease, font-weight 0.2s ease;
+}
+
+.growth-val-label {
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.growth-grid-line {
+  stroke: rgba(100, 116, 139, 0.14);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+
+body.theme-dark .growth-grid-line {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.growth-axis-text {
+  font-family: var(--font-display);
+  font-size: 11.5px;
+  font-weight: 700;
+  fill: var(--text-muted);
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.growth-axis-title {
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 800;
+  font-style: italic;
+  fill: var(--text-muted);
+  text-anchor: middle;
+}
