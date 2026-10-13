@@ -379,12 +379,6 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
           {/* RIGHT: EXACT EXCEL TABLE FROM IMAGE (Grupo | Crec YTD) */}
           <div className="group-excel-panel">
             <div className="excel-table-card">
-              {/* Formula Bar with fx like in Excel */}
-              <div className="excel-formula-bar">
-                <span className="excel-fx-tag">fx</span>
-                <span className="excel-formula-value">7.8396554...</span>
-              </div>
-
               {/* Main Native Table with Peach Header */}
               <table className="excel-native-table">
                 <thead>
@@ -407,7 +401,7 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
                           onMouseLeave={() => setIsHoveredTotal(false)}
                         >
                           <td className="excel-cell-group">{row.group}</td>
-                          <td className="excel-cell-val excel-total-highlight-cell">
+                          <td className="excel-cell-val">
                             {row.growth}%
                           </td>
                         </tr>

@@ -223,38 +223,6 @@ body.theme-dark .excel-table-card {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
-/* Excel Sheet Mini Header */
-.excel-formula-bar {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 14px;
-  background: rgba(241, 245, 249, 0.7);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
-  font-family: var(--font-body);
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
-body.theme-dark .excel-formula-bar {
-  background: rgba(30, 41, 59, 0.5);
-  border-bottom-color: rgba(255, 255, 255, 0.08);
-}
-
-.excel-fx-tag {
-  font-weight: 800;
-  font-style: italic;
-  font-family: serif;
-  color: var(--accent-blue);
-  font-size: 13px;
-}
-
-.excel-formula-value {
-  font-family: monospace;
-  font-weight: 700;
-  color: var(--text-title);
-}
-
 /* Excel Main Table */
 .excel-native-table {
   width: 100%;
@@ -345,23 +313,8 @@ body.theme-dark .excel-row-total {
   background: rgba(30, 41, 59, 0.4);
 }
 
-.excel-row-total .excel-cell-group {
+.excel-row-total .excel-cell-group,
+.excel-row-total .excel-cell-val {
   font-weight: 900;
   color: var(--text-title);
-}
-
-/* Active Excel Cell highlight with green border */
-.excel-total-highlight-cell {
-  position: relative;
-  border: 2px solid #059669 !important;
-  background: rgba(5, 150, 105, 0.06);
-  color: #059669 !important;
-  font-weight: 900 !important;
-  border-radius: 4px;
-}
-
-body.theme-dark .excel-total-highlight-cell {
-  border-color: #34d399 !important;
-  color: #34d399 !important;
-  background: rgba(52, 211, 153, 0.1);
 }
