@@ -171,7 +171,7 @@ export const App: React.FC = () => {
           className={`slide-page ${currentSlide === 3 ? 'is-active-slide' : ''}`}
           id="slide-3"
         >
-          <StoreGrowthSlide />
+          <StoreGrowthSlide isActive={currentSlide === 3} />
         </section>
 
         {/* SLIDE FINAL (SIEMPRE AL FINAL): ¡MUCHAS GRACIAS! */}

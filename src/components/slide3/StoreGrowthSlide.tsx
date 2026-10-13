@@ -1,10 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { STORE_GROWTH_DATA, POSITIVE_STORES, NEGATIVE_STORES, AVG_GROWTH } from '../../data/storeGrowth';
 import { StoreGrowthItem } from '../../data/storeGrowth';
-import { TrendingUp, Award, AlertTriangle } from 'lucide-react';
+import { TrendingUp, Award, AlertTriangle, RefreshCw } from 'lucide-react';
 
-export const StoreGrowthSlide: React.FC = () => {
+interface StoreGrowthSlideProps {
+  isActive?: boolean;
+}
+
+export const StoreGrowthSlide: React.FC<StoreGrowthSlideProps> = ({ isActive = true }) => {
   const [hoveredStore, setHoveredStore] = useState<StoreGrowthItem | null>(null);
+  const [isAnimating, setIsAnimating] = useState<boolean>(true);
+  const [cycleCount, setCycleCount] = useState<number>(0);
+
+  // Trigger cascade on slide entry and every 10 seconds
+  const triggerCascade = useCallback(() => {
+    setIsAnimating(false);
+    setTimeout(() => {
+      setIsAnimating(true);
+      setCycleCount((prev) => prev + 1);
+    }, 60);
+  }, []);
+
+  useEffect(() => {
+    if (!isActive) {
+      setIsAnimating(false);
+      return;
+    }
+
+    // First time entering Slide 3: trigger immediately
+    triggerCascade();
+
+    // Replay every 10 seconds as requested by user / client
+    const interval = setInterval(() => {
+      triggerCascade();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [isActive, triggerCascade]);
 
   // SVG Geometry constants
   const svgWidth = 1100;
@@ -42,8 +74,17 @@ export const StoreGrowthSlide: React.FC = () => {
             </div>
           </div>
 
-          {/* KPI HIGHLIGHT PILLS */}
+          {/* KPI HIGHLIGHT PILLS & REPLAY CONTROLLER */}
           <div className="growth-kpi-cluster">
+            <button
+              className="btn-replay-cascade"
+              onClick={triggerCascade}
+              title="Repetir flujo de animación de barras (Autoreproduce cada 10s)"
+            >
+              <RefreshCw size={13} className={!isAnimating ? 'spin-fast' : ''} />
+              <span>Flujo 10s ({cycleCount > 0 ? `#${cycleCount}` : 'Activo'})</span>
+            </button>
+
             <div className="growth-pill-badge pill-growth-avg" title="Promedio ponderado nacional">
               <TrendingUp size={14} />
               <span>Promedio: <strong>+{AVG_GROWTH}%</strong></span>
@@ -167,10 +208,11 @@ export const StoreGrowthSlide: React.FC = () => {
               Variación %
             </text>
 
-            {/* 14 STORE ROWS */}
+            {/* 14 STORE ROWS WITH SEQUENTIAL TOP-TO-BOTTOM EXPANSION */}
             {STORE_GROWTH_DATA.map((item, idx) => {
               const y = startY + idx * rowHeight;
               const isHovered = hoveredStore?.id === item.id;
+              const delayMs = idx * 90; // Staggered cascade delay from top to bottom
 
               // Color assignment based on growth tier
               let barGrad = 'url(#grad-green-mod)';
@@ -191,7 +233,7 @@ export const StoreGrowthSlide: React.FC = () => {
                   className="growth-row-group"
                   onMouseEnter={() => setHoveredStore(item)}
                   onMouseLeave={() => setHoveredStore(null)}
-                  opacity={hoveredStore && !isHovered ? 0.5 : 1}
+                  opacity={hoveredStore && !isHovered ? 0.45 : 1}
                 >
                   {/* Subtle row highlight */}
                   {isHovered && (
@@ -213,12 +255,14 @@ export const StoreGrowthSlide: React.FC = () => {
                     style={{
                       fill: isHovered ? 'var(--accent-blue)' : undefined,
                       fontWeight: isHovered ? 800 : 700,
+                      opacity: isAnimating ? 1 : 0.35,
+                      transition: isAnimating ? `opacity 0.3s ease ${delayMs}ms` : 'none',
                     }}
                   >
                     {item.store}
                   </text>
 
-                  {/* Horizontal Bar Rectangle */}
+                  {/* Horizontal Bar Rectangle (Grows from center 0% baseline outwards) */}
                   {item.growth !== 0 && (
                     <rect
                       className="growth-bar-rect"
@@ -228,16 +272,35 @@ export const StoreGrowthSlide: React.FC = () => {
                       height={barThickness}
                       fill={barGrad}
                       rx="3"
+                      style={{
+                        transformOrigin: `${zeroX}px ${y + barThickness / 2}px`,
+                        transform: isAnimating ? 'scaleX(1)' : 'scaleX(0)',
+                        opacity: isAnimating ? 1 : 0,
+                        transition: isAnimating
+                          ? `transform 0.52s cubic-bezier(0.16, 1, 0.3, 1) ${delayMs}ms, opacity 0.25s ease ${delayMs}ms`
+                          : 'none',
+                      }}
                     />
                   )}
 
-                  {/* Percentage Value Label */}
+                  {/* Percentage Value Label (Fades in as each bar expands) */}
                   <text
                     className="growth-val-label"
                     x={item.growth >= 0 ? zeroX + barWidth + 8 : barX - 8}
                     y={y + 13}
                     textAnchor={item.growth >= 0 ? 'start' : 'end'}
                     fill={item.growth >= 0 ? '#059669' : '#e11d48'}
+                    style={{
+                      opacity: isAnimating ? 1 : 0,
+                      transform: isAnimating
+                        ? 'translateX(0)'
+                        : item.growth >= 0
+                        ? 'translateX(-8px)'
+                        : 'translateX(8px)',
+                      transition: isAnimating
+                        ? `opacity 0.35s ease ${delayMs + 220}ms, transform 0.35s cubic-bezier(0.16, 1, 0.3, 1) ${delayMs + 220}ms`
+                        : 'none',
+                    }}
                   >
                     {item.growth > 0 ? `${item.growth}%` : `${item.growth}%`}
                   </text>
