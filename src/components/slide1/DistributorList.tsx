@@ -1,72 +1,77 @@
 import React from 'react';
 import { Distributor } from '../../types/presentation';
 import { DISTRIBUTORS } from '../../data/distributors';
-import { Truck, Users } from 'lucide-react';
+import { Network, Store, Users, Truck } from 'lucide-react';
 
 interface DistributorListProps {
   selectedId: string | null;
   onSelect: (distributor: Distributor) => void;
-  onClear: () => void;
 }
 
 export const DistributorList: React.FC<DistributorListProps> = ({
   selectedId,
   onSelect,
-  onClear,
 }) => {
   return (
-    <aside className="distributor-sidebar glass-panel">
-      <div className="sidebar-header">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2>10 Distribuidores</h2>
-          {selectedId && (
-            <button
-              onClick={onClear}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--accent-cyan)',
-                fontSize: '11px',
-                cursor: 'pointer',
-                fontWeight: 600,
-              }}
-            >
-              Ver Nacional
-            </button>
-          )}
+    <aside className="dist-column">
+      <div className="dist-column-header">
+        <div className="dist-column-title">
+          <Network size={16} style={{ color: 'var(--accent-blue)' }} />
+          <span>Red de Distribuidores</span>
         </div>
-        <p>Selecciona un socio comercial para enfocar su región</p>
+        <span className="dist-column-badge">10 Socios Oficiales</span>
       </div>
 
-      <div className="distributor-list">
+      <div className="dist-cards-list">
         {DISTRIBUTORS.map((dist) => {
-          const isSelected = selectedId === dist.id;
+          const isActive = selectedId === dist.id;
           return (
             <div
               key={dist.id}
-              className={`distributor-card ${isSelected ? 'active' : ''}`}
+              className={`dist-card ${isActive ? 'is-active' : ''}`}
+              style={{ '--accent-dist': dist.color } as React.CSSProperties}
               onClick={() => onSelect(dist)}
             >
-              <div className="card-top">
-                <span className="card-name">
-                  <span className="card-dot" style={{ backgroundColor: dist.color }} />
-                  {dist.name}
-                </span>
-                <span className="card-year">Inicio {dist.year}</span>
+              <div className="dist-card-top">
+                <div className="dist-header-title">
+                  <span
+                    className="dist-color-indicator"
+                    style={{ background: dist.color }}
+                  />
+                  <span className="dist-name">{dist.name}</span>
+                </div>
+                <span className="dist-year-badge">Desde {dist.year}</span>
               </div>
-              <div className="card-region">{dist.region}</div>
-              <div className="card-metrics">
-                <span>
-                  <Users size={12} />
-                  <strong>{dist.sellers}</strong> vend.
-                </span>
-                <span>
-                  <Truck size={12} />
-                  <strong>{dist.trucks}</strong> cam.
-                </span>
-                <span>
-                  <strong>{dist.clients.toLocaleString()}</strong> clientes
-                </span>
+
+              <div className="dist-kpi-row">
+                <div className="kpi-mini">
+                  <span className="kpi-mini-lbl">
+                    <Store size={11} /> Clientes
+                  </span>
+                  <span className="kpi-mini-val">
+                    {dist.clients.toLocaleString()}
+                  </span>
+                </div>
+                <div className="kpi-mini">
+                  <span className="kpi-mini-lbl">
+                    <Users size={11} /> Vendedores
+                  </span>
+                  <span className="kpi-mini-val">{dist.sellers}</span>
+                </div>
+                <div className="kpi-mini">
+                  <span className="kpi-mini-lbl">
+                    <Truck size={11} /> Camiones
+                  </span>
+                  <span className="kpi-mini-val">{dist.trucks}</span>
+                </div>
+              </div>
+
+              <div className="dist-cities-footer">
+                {dist.cities.map((c) => (
+                  <span key={c} className="city-pill">
+                    {c}
+                  </span>
+                ))}
               </div>
             </div>
           );

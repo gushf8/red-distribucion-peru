@@ -1,164 +1,234 @@
 import React from 'react';
 import { DistributorTrajectory } from '../../types/presentation';
+import { Flag } from 'lucide-react';
 
 interface TrajectoryBarChartProps {
   trajectory: DistributorTrajectory;
-  accentColor: string;
+  isNational: boolean;
 }
 
 export const TrajectoryBarChart: React.FC<TrajectoryBarChartProps> = ({
   trajectory,
-  accentColor,
+  isNational,
 }) => {
+  // Determine scale
+  const rawMax = Math.max(
+    trajectory.cierre25,
+    trajectory.q3_25,
+    trajectory.q3_26,
+    trajectory.oct26,
+    trajectory.nov26,
+    trajectory.cierre26
+  );
+
+  const maxAxis = isNational ? 140 : Math.ceil((rawMax * 1.25) / 5) * 5;
+  const baseY = 410;
+  const topY = 60;
+  const chartHeight = baseY - topY; // 350
+
+  const getY = (val: number) => baseY - (val / maxAxis) * chartHeight;
+  const getHeight = (val: number) => (val / maxAxis) * chartHeight;
+
+  // 6 Bars config
   const bars = [
-    { label: "Cierre '25", value: trajectory.cierre25, color: '#64748b', isTarget: false },
-    { label: "Q3 '25", value: trajectory.q3_25, color: '#3b82f6', isTarget: false },
-    { label: "Q3 '26", value: trajectory.q3_26, color: '#0ea5e9', isTarget: false, isHighlight: true },
-    { label: "Oct '26", value: trajectory.oct26, color: '#10b981', isTarget: false },
-    { label: "Nov '26", value: trajectory.nov26, color: '#059669', isTarget: false },
-    { label: "Cierre '26 (Meta)", value: trajectory.cierre26, color: accentColor || '#f59e0b', isTarget: true },
+    { label: 'Cierre 2025', val: trajectory.cierre25, x: 120, grad: 'url(#grad-bar-green)' },
+    { label: "Cierre al Q3 '25", val: trajectory.q3_25, x: 245, grad: 'url(#grad-bar-darknavy)' },
+    { label: "Cierre al Q3 '26", val: trajectory.q3_26, x: 370, grad: 'url(#grad-bar-medblue)' },
+    { label: 'Oct-26', val: trajectory.oct26, x: 495, grad: 'url(#grad-bar-skyblue1)' },
+    { label: 'Nov-26', val: trajectory.nov26, x: 620, grad: 'url(#grad-bar-skyblue2)' },
+    { label: 'Cierre 2026', val: trajectory.cierre26, x: 745, grad: 'url(#grad-bar-targetgreen)', isTarget: true },
   ];
 
-  const maxValue = Math.max(...bars.map((b) => b.value)) * 1.25;
-  const chartHeight = 220;
-  const chartWidth = 840;
-  const barWidth = 72;
-  const startX = 60;
-  const spacing = (chartWidth - startX) / bars.length;
+  // Axis steps (7 ticks: 0, 1/6, 2/6... 1)
+  const steps = [0, 0.2, 0.4, 0.6, 0.8, 1.0];
+
+  // Callout coordinates between Bar 2 (x: 285) and Bar 3 (x: 410)
+  const bar2Top = getY(trajectory.q3_25);
+  const bar3Top = getY(trajectory.q3_26);
+  const calloutBoxY = Math.min(bar2Top, bar3Top) - 65;
 
   return (
-    <div className="svg-chart-container">
-      <svg viewBox="0 0 880 330" style={{ width: '100%', height: '100%' }}>
+    <div className="chart-canvas-area">
+      <svg id="trajectory-svg" viewBox="0 0 920 480" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          <linearGradient id="targetGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#d97706" />
+          <linearGradient id="grad-bar-green" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#a8d38d" />
+            <stop offset="100%" stopColor="#84b865" />
           </linearGradient>
-          <linearGradient id="q3Grad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#38bdf8" />
-            <stop offset="100%" stopColor="#0284c7" />
+
+          <linearGradient id="grad-bar-darknavy" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#143c68" />
+            <stop offset="100%" stopColor="#0a2342" />
           </linearGradient>
+
+          <linearGradient id="grad-bar-medblue" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1b6ca8" />
+            <stop offset="100%" stopColor="#104e7a" />
+          </linearGradient>
+
+          <linearGradient id="grad-bar-skyblue1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#549fd6" />
+            <stop offset="100%" stopColor="#3b82b6" />
+          </linearGradient>
+
+          <linearGradient id="grad-bar-skyblue2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#6bafe2" />
+            <stop offset="100%" stopColor="#4e92c4" />
+          </linearGradient>
+
+          <linearGradient id="grad-bar-targetgreen" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#b2db97" />
+            <stop offset="100%" stopColor="#8fc471" />
+          </linearGradient>
+
+          <filter id="callout-shadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="4" stdDeviation="6" floodOpacity="0.18" />
+          </filter>
         </defs>
 
-        {/* Horizontal grid guide lines */}
-        {[0, 0.25, 0.5, 0.75, 1].map((pct, i) => {
-          const y = chartHeight - pct * (chartHeight - 40) + 30;
-          const val = Math.round((maxValue * pct) * 10) / 10;
+        <text x="35" y="240" transform="rotate(-90 35 240)" className="axis-y-label">
+          Miles de Toneladas
+        </text>
+
+        {/* Grid lines */}
+        {steps.map((pct, idx) => {
+          const val = Math.round(maxAxis * pct * 10) / 10;
+          const y = baseY - pct * chartHeight;
           return (
-            <g key={i}>
+            <g key={idx}>
               <line
-                x1={startX - 20}
+                x1="85"
                 y1={y}
-                x2={chartWidth + 20}
+                x2="890"
                 y2={y}
-                stroke="var(--border-color)"
-                strokeDasharray="4 4"
+                className={idx === 0 ? undefined : 'grid-line'}
+                stroke={idx === 0 ? 'var(--text-title)' : undefined}
+                strokeWidth={idx === 0 ? 1.8 : undefined}
+                opacity={idx === 0 ? 0.6 : undefined}
               />
-              <text
-                x={startX - 28}
-                y={y + 4}
-                textAnchor="end"
-                fontSize="11"
-                fill="var(--text-muted)"
-              >
-                {val}k
+              <text x="75" y={y + 5} className="axis-y-text">
+                {val}
               </text>
             </g>
           );
         })}
 
-        {/* Bars and labels */}
-        {bars.map((bar, idx) => {
-          const x = startX + idx * spacing + (spacing - barWidth) / 2;
-          const h = (bar.value / maxValue) * (chartHeight - 40);
-          const y = chartHeight + 30 - h;
+        {/* 6 Bars */}
+        {bars.map((bar) => {
+          const h = getHeight(bar.val);
+          const y = getY(bar.val);
+          const centerX = bar.x + 40;
 
           return (
-            <g key={bar.label}>
-              {/* Bar Rect */}
+            <g key={bar.label} className="bar-group">
               <rect
-                x={x}
+                className="chart-bar-rect"
+                x={bar.x}
                 y={y}
-                width={barWidth}
+                width="80"
                 height={h}
-                rx={6}
-                fill={bar.isTarget ? 'url(#targetGrad)' : bar.isHighlight ? 'url(#q3Grad)' : bar.color}
-                opacity={bar.isTarget ? 1 : 0.85}
+                fill={bar.grad}
               />
-
-              {/* Value on top of bar */}
-              <text
-                x={x + barWidth / 2}
-                y={y - 8}
-                textAnchor="middle"
-                fontSize="14"
-                fontWeight="800"
-                fill="var(--text-primary)"
-              >
-                {bar.value}k
+              <text className="bar-value-text" x={centerX} y={y - 12}>
+                {bar.val}
               </text>
-
-              {/* Bottom label */}
               <text
-                x={x + barWidth / 2}
-                y={chartHeight + 52}
-                textAnchor="middle"
-                fontSize="12"
-                fontWeight="700"
-                fill={bar.isTarget ? 'var(--accent-amber)' : 'var(--text-secondary)'}
+                className="axis-x-label"
+                x={centerX}
+                y="438"
+                style={{ fill: bar.isTarget ? '#15803d' : undefined }}
               >
                 {bar.label}
               </text>
-
-              {/* Callout pill for Q3 '26 growth */}
-              {bar.isHighlight && (
-                <g transform={`translate(${x + barWidth / 2 - 50}, ${y - 48})`}>
-                  <rect
-                    width="100"
-                    height="28"
-                    rx="14"
-                    fill="#10b981"
-                    filter="drop-shadow(0 2px 6px rgba(16, 185, 129, 0.4))"
-                  />
-                  <text
-                    x="50"
-                    y="18"
-                    textAnchor="middle"
-                    fontSize="11"
-                    fontWeight="800"
-                    fill="#ffffff"
-                  >
-                    +{trajectory.delta_tons}k TM (+{trajectory.delta_pct}%)
-                  </text>
-                </g>
-              )}
-
-              {/* Milestone badge for Target */}
-              {bar.isTarget && (
-                <g transform={`translate(${x + barWidth / 2 - 45}, ${y - 44})`}>
-                  <rect
-                    width="90"
-                    height="24"
-                    rx="12"
-                    fill="#f59e0b"
-                    filter="drop-shadow(0 2px 6px rgba(245, 158, 11, 0.4))"
-                  />
-                  <text
-                    x="45"
-                    y="16"
-                    textAnchor="middle"
-                    fontSize="10"
-                    fontWeight="800"
-                    fill="#0f172a"
-                  >
-                    META 2026
-                  </text>
-                </g>
-              )}
             </g>
           );
         })}
+
+        {/* Delta Callout Box */}
+        <g className="delta-callout-bubble">
+          <path
+            d={`M 285,${bar2Top - 15} L 348,${calloutBoxY + 50} L 410,${bar3Top - 15}`}
+            fill="none"
+            stroke="var(--text-title)"
+            strokeWidth="1.6"
+            opacity="0.65"
+          />
+          <rect
+            x="290"
+            y={calloutBoxY}
+            width="120"
+            height="46"
+            rx="8"
+            fill="var(--card-bg)"
+            stroke="#0284c7"
+            strokeWidth="1.4"
+            filter="url(#callout-shadow)"
+          />
+          <text
+            x="350"
+            y={calloutBoxY + 19}
+            fontFamily="Outfit, sans-serif"
+            fontSize="12.5"
+            fontWeight="900"
+            fill="var(--text-title)"
+            textAnchor="middle"
+          >
+            + {trajectory.delta_tons} Mil Tons
+          </text>
+          <text
+            x="350"
+            y={calloutBoxY + 36}
+            fontFamily="Outfit, sans-serif"
+            fontSize="12"
+            fontWeight="800"
+            fill="#059669"
+            textAnchor="middle"
+          >
+            + {trajectory.delta_pct}%
+          </text>
+        </g>
       </svg>
+
+      {/* Target Badge */}
+      <div
+        style={{
+          position: 'absolute',
+          bottom: '16px',
+          right: '24px',
+          background: 'var(--glass-badge-bg)',
+          backdropFilter: 'blur(12px)',
+          border: '1px solid rgba(21, 128, 61, 0.3)',
+          borderRadius: '12px',
+          padding: '8px 14px',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '10px',
+          boxShadow: 'var(--card-shadow)',
+        }}
+      >
+        <div
+          style={{
+            width: '32px',
+            height: '32px',
+            borderRadius: '8px',
+            background: 'rgba(21, 128, 61, 0.15)',
+            color: '#15803d',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Flag size={16} />
+        </div>
+        <div>
+          <div style={{ fontSize: '12px', fontWeight: 800, color: '#15803d' }}>
+            Meta Anual 2026
+          </div>
+          <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-muted)' }}>
+            {trajectory.cierre26}K Tons Proyectadas
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

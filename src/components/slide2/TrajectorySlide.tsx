@@ -3,6 +3,7 @@ import { DISTRIBUTORS, CONSOLIDATED_TRAJECTORY } from '../../data/distributors';
 import { DistributorFilterBar } from './DistributorFilterBar';
 import { TrajectoryBarChart } from './TrajectoryBarChart';
 import { TrajectoryInsights } from './TrajectoryInsights';
+import { TrendingUp } from 'lucide-react';
 
 export const TrajectorySlide: React.FC = () => {
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
@@ -18,38 +19,38 @@ export const TrajectorySlide: React.FC = () => {
 
   const displayName = currentDistributor
     ? currentDistributor.name
-    : 'Consolidado Nacional';
-
-  const accentColor = currentDistributor ? currentDistributor.color : '#f59e0b';
+    : 'El reto de la gerencia distribuidores';
 
   return (
-    <div className="slide2-layout">
-      <div className="slide2-header glass-panel">
-        <div className="slide2-titles">
-          <h2>El Reto de la Gerencia de Distribuidores</h2>
-          <p>
-            Lo construimos juntos • Proyección de Cierre 2026 y Comparativa Interanual (k = Mil TM)
-          </p>
-        </div>
-      </div>
+    <main className="deck-grid-slide2">
+      {/* LEFT: INTERACTIVE BAR CHART STAGE */}
+      <section className="trajectory-chart-card">
+        <div className="chart-top-bar">
+          <div className="chart-titles">
+            <div className="chart-main-title">
+              <TrendingUp size={24} style={{ color: '#0284c7' }} />
+              <span>{displayName}</span>
+            </div>
+            <div className="chart-sub-tag">Lo construimos juntos</div>
+          </div>
 
-      <div className="chart-section">
-        <div className="chart-main glass-panel">
           <DistributorFilterBar
             selectedFilter={selectedFilter}
             onSelectFilter={setSelectedFilter}
           />
-          <TrajectoryBarChart
-            trajectory={trajectory}
-            accentColor={accentColor}
-          />
         </div>
 
-        <TrajectoryInsights
+        <TrajectoryBarChart
           trajectory={trajectory}
-          distributorName={displayName}
+          isNational={selectedFilter === 'all'}
         />
-      </div>
-    </div>
+      </section>
+
+      {/* RIGHT: TRAJECTORY INSIGHTS DASHBOARD */}
+      <TrajectoryInsights
+        trajectory={trajectory}
+        distributorName={currentDistributor ? currentDistributor.shortName : 'Consolidado Nacional'}
+      />
+    </main>
   );
 };

@@ -1,47 +1,41 @@
 import React from 'react';
 import { DEPARTMENTS } from '../../data/departments';
-import { CITIES } from '../../data/cities';
+import { DETAILED_CITIES, DetailedCityNode } from '../../data/cities';
 import { Distributor } from '../../types/presentation';
 
 interface PeruVectorMapProps {
   selectedDistributor: Distributor | null;
   onSelectDistributorById: (id: string) => void;
+  onHoverCity: (city: DetailedCityNode | null, e?: React.MouseEvent) => void;
 }
 
 export const PeruVectorMap: React.FC<PeruVectorMapProps> = ({
   selectedDistributor,
   onSelectDistributorById,
+  onHoverCity,
 }) => {
   const activeDepts = selectedDistributor ? selectedDistributor.depts : [];
-  const distributorColor = selectedDistributor ? selectedDistributor.color : '#38bdf8';
+  const brandColor = selectedDistributor ? selectedDistributor.color : '#0284c7';
 
   return (
-    <div className="map-canvas-wrap">
-      <svg
-        className="peru-svg"
-        viewBox="0 0 600 820"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="3" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
-        </defs>
-
-        {/* Departments vector layer */}
+    <div className="svg-wrapper">
+      <svg id="peru-svg" viewBox="0 0 600 850" xmlns="http://www.w3.org/2000/svg">
+        {/* Departments layer */}
         <g id="departments-layer">
           {DEPARTMENTS.map((dept) => {
             const isHighlighted = activeDepts.includes(dept.name);
             return (
               <path
                 key={dept.name}
+                id={`dept-${dept.name}`}
+                data-dept={dept.name}
+                className="dept-shape"
                 d={dept.d}
-                className={`dept-path ${isHighlighted ? 'highlighted' : ''}`}
                 style={{
-                  fill: isHighlighted ? distributorColor : undefined,
-                  fillOpacity: isHighlighted ? 0.35 : undefined,
-                  stroke: isHighlighted ? distributorColor : undefined,
+                  fill: isHighlighted ? brandColor : undefined,
+                  fillOpacity: isHighlighted ? 0.45 : selectedDistributor ? 0.12 : undefined,
+                  stroke: isHighlighted ? brandColor : undefined,
+                  strokeWidth: isHighlighted ? 2.2 : undefined,
                 }}
               >
                 <title>{dept.name}</title>
@@ -52,46 +46,58 @@ export const PeruVectorMap: React.FC<PeruVectorMapProps> = ({
 
         {/* Cities marker layer */}
         <g id="cities-layer">
-          {CITIES.map((city) => {
-            const isCityActive = selectedDistributor
-              ? selectedDistributor.id === city.distributorId
+          {DETAILED_CITIES.map((city) => {
+            const belongs = selectedDistributor
+              ? city.distributorId === selectedDistributor.id ||
+                selectedDistributor.cities.includes(city.name)
               : true;
 
-            const radius = isCityActive && selectedDistributor ? 5.5 : 3.5;
-            const dotColor = isCityActive && selectedDistributor ? distributorColor : '#94a3b8';
+            const isHub = city.isHub;
 
             return (
               <g
-                key={city.name}
-                className="city-node"
+                key={city.id}
+                className={`city-marker ${isHub ? 'hub-marker' : 'regular-marker'} ${
+                  belongs && selectedDistributor ? 'is-active' : ''
+                }`}
+                style={{
+                  opacity: selectedDistributor ? (belongs ? 1 : 0.22) : 1,
+                  '--active-pin-color': brandColor,
+                } as React.CSSProperties}
                 transform={`translate(${city.x}, ${city.y})`}
                 onClick={() => onSelectDistributorById(city.distributorId)}
+                onMouseEnter={(e) => onHoverCity(city, e)}
+                onMouseMove={(e) => onHoverCity(city, e)}
+                onMouseLeave={() => onHoverCity(null)}
               >
-                {isCityActive && selectedDistributor && (
+                <g className="marker-graphics">
+                  <circle className="radar-pulse" cx="0" cy="0" r="15" />
+                  <circle className="marker-glow" cx="0" cy="0" r="8" />
                   <circle
-                    r={radius + 4}
-                    fill={dotColor}
-                    opacity="0.3"
-                    className="pulse-circle"
+                    className="marker-dot"
+                    cx="0"
+                    cy="0"
+                    r={belongs && selectedDistributor ? 7.5 : city.dotRadius}
+                    style={{
+                      fill:
+                        belongs && selectedDistributor
+                          ? brandColor
+                          : isHub
+                          ? 'var(--accent-crimson)'
+                          : undefined,
+                      stroke: belongs && selectedDistributor ? '#ffffff' : undefined,
+                      strokeWidth: belongs && selectedDistributor ? 2.8 : undefined,
+                    }}
                   />
-                )}
-                <circle
-                  r={radius}
-                  fill={dotColor}
-                  stroke="#ffffff"
-                  strokeWidth="1.2"
-                />
-                <text
-                  x={radius + 5}
-                  y={3}
-                  className="city-label"
-                  style={{
-                    fill: isCityActive && selectedDistributor ? '#ffffff' : undefined,
-                    fontWeight: isCityActive && selectedDistributor ? 800 : 600,
-                  }}
-                >
-                  {city.name}
-                </text>
+                  <text
+                    className="city-label"
+                    x={city.labelDx}
+                    y={city.labelDy}
+                    textAnchor={city.textAnchor as any}
+                  >
+                    {city.name}
+                  </text>
+                </g>
               </g>
             );
           })}

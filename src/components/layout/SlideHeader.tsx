@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sun, Moon, Play, Pause, ChevronLeft, ChevronRight } from 'lucide-react';
+import { MapPin, ChevronLeft, ChevronRight, Moon, Sun, RotateCcw, Play, Pause } from 'lucide-react';
 
 interface SlideHeaderProps {
   currentSlide: number;
@@ -9,6 +9,7 @@ interface SlideHeaderProps {
   onPrev: () => void;
   onNext: () => void;
   onToggleTheme: () => void;
+  onReset: () => void;
   onToggleTour: () => void;
 }
 
@@ -20,44 +21,61 @@ export const SlideHeader: React.FC<SlideHeaderProps> = ({
   onPrev,
   onNext,
   onToggleTheme,
+  onReset,
   onToggleTour,
 }) => {
   return (
-    <header className="top-header glass-panel">
+    <header className="slide-header">
       <div className="header-left">
-        <span className="header-badge">Estrategia Comercial 2026</span>
-        <h1 className="header-title">
-          {currentSlide === 1
-            ? 'Red Nacional de Distribución y Cobertura Territorial'
-            : 'Trayectoria Histórica y Metas de Cierre 2026'}
-        </h1>
+        <div className="header-badge-tag">
+          <MapPin size={17} />
+          <span>RED NACIONAL</span>
+        </div>
+        <div>
+          <h1>Presencia a lo largo del Perú</h1>
+          <p>Red Estratégica de Distribución Comercial · 10 Socios · 26 Plazas</p>
+        </div>
       </div>
 
       <div className="header-controls">
-        <button
-          className={`btn-pill ${isTouring ? 'active' : ''}`}
-          onClick={onToggleTour}
-          title="Tour Automático de Distribuidores"
-        >
-          {isTouring ? <Pause size={16} /> : <Play size={16} />}
-          <span>{isTouring ? 'Pausar Tour' : 'Auto Tour'}</span>
-        </button>
-
-        <button className="btn-icon" onClick={onToggleTheme} title="Cambiar Tema Visual">
-          {isDark ? <Sun size={18} /> : <Moon size={18} />}
-        </button>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginLeft: '8px' }}>
-          <button className="btn-icon" onClick={onPrev} title="Diapositiva Anterior (←)">
-            <ChevronLeft size={18} />
+        <div className="deck-nav-cluster" title="Navegar entre diapositivas (Flechas ← y →)">
+          <button
+            className="btn-slide-nav"
+            onClick={onPrev}
+            title="Diapositiva anterior (Flecha Izquierda ←)"
+          >
+            <ChevronLeft size={20} />
           </button>
-          <span className="page-indicator">
+          <span className="slide-page-indicator">
             {currentSlide} / {totalSlides}
           </span>
-          <button className="btn-icon" onClick={onNext} title="Siguiente Diapositiva (→)">
-            <ChevronRight size={18} />
+          <button
+            className="btn-slide-nav"
+            onClick={onNext}
+            title="Siguiente diapositiva (Flecha Derecha →)"
+          >
+            <ChevronRight size={20} />
           </button>
         </div>
+
+        <button className="btn-exec" onClick={onToggleTheme} title="Alternar tema visual">
+          {isDark ? <Sun size={17} /> : <Moon size={17} />}
+          <span>{isDark ? 'Modo Claro' : 'Modo Oscuro'}</span>
+        </button>
+
+        <button className="btn-exec" onClick={onReset} title="Restablecer vista nacional">
+          <RotateCcw size={17} />
+          <span>Ver Todo</span>
+        </button>
+
+        <button
+          className={`btn-exec btn-primary ${isTouring ? 'tour-active' : ''}`}
+          onClick={onToggleTour}
+          title="Iniciar recorrido guiado interactivo"
+        >
+          {isTouring ? <Pause size={17} /> : <Play size={17} />}
+          <span>{isTouring ? 'Pausar Tour' : 'Tour Automático'}</span>
+        </button>
       </div>
     </header>
   );

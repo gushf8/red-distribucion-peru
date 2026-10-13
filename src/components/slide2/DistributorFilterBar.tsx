@@ -11,24 +11,19 @@ export const DistributorFilterBar: React.FC<DistributorFilterBarProps> = ({
   onSelectFilter,
 }) => {
   return (
-    <div className="chart-filters">
+    <div className="dist-selector-pillbar">
       <button
-        className={`filter-btn ${selectedFilter === 'all' ? 'active' : ''}`}
+        className={`btn-dist-filter ${selectedFilter === 'all' ? 'is-filter-active' : ''}`}
         onClick={() => onSelectFilter('all')}
       >
-        Consolidado Nacional (10 Distribuidores)
+        Nacional
       </button>
 
       {DISTRIBUTORS.map((d) => (
         <button
           key={d.id}
-          className={`filter-btn ${selectedFilter === d.id ? 'active' : ''}`}
+          className={`btn-dist-filter ${selectedFilter === d.id ? 'is-filter-active' : ''}`}
           onClick={() => onSelectFilter(d.id)}
-          style={{
-            borderColor: selectedFilter === d.id ? d.color : undefined,
-            backgroundColor: selectedFilter === d.id ? d.color : undefined,
-            color: selectedFilter === d.id ? '#ffffff' : undefined,
-          }}
         >
           {d.shortName}
         </button>
