@@ -1,6 +1,7 @@
 /* =========================================================================
-   SLIDE 4: CRECIMIENTO YTD POR GRUPO (LÍNEA GRÁFICA EJECUTIVA)
-   Datos: 9 Grupos Comerciales + Total Red Nacional (8%)
+   SLIDE 4: CRECIMIENTO YTD POR GRUPO
+   Izquierda: Gráfico SVG horizontal de 9 Grupos
+   Derecha: Tabla Exacta de Excel (Grupo | Crec YTD)
    ========================================================================= */
 
 .deck-grid-slide4 {
@@ -111,14 +112,15 @@ body.theme-dark .pill-group-total {
   border-color: rgba(2, 132, 199, 0.22);
 }
 
-/* Dual Content Split: Chart on Left (62%) + Table/Insights on Right (38%) */
+/* Dual Content Split: Chart on Left (64%) + Exact Excel Table on Right (36%) */
 .group-content-split {
   display: grid;
-  grid-template-columns: 1.45fr 1fr;
-  gap: 20px;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 22px;
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  align-items: stretch;
 }
 
 /* Chart Canvas Section */
@@ -127,7 +129,7 @@ body.theme-dark .pill-group-total {
   flex-direction: column;
   position: relative;
   background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(226, 232, 240, 0.8);
+  border: 1px solid rgba(226, 232, 240, 0.85);
   border-radius: 16px;
   padding: 10px 16px 8px 16px;
   overflow: hidden;
@@ -193,236 +195,173 @@ body.theme-dark .group-grid-line {
   transition: opacity 0.2s ease;
 }
 
-/* Right Column: Executive Table & KPI Insights */
-.group-side-panel {
+/* RIGHT COLUMN: EXACT EXCEL TABLE CONTAINER */
+.group-excel-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  justify-content: center;
   height: 100%;
   min-height: 0;
   overflow: hidden;
 }
 
-/* Ranking Table Card */
-.group-table-card {
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 16px;
-  padding: 12px 14px;
+/* Authentic Excel Sheet Card */
+.excel-table-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-height: 0;
   overflow: hidden;
+  max-height: 100%;
 }
 
-body.theme-dark .group-table-card {
-  background: rgba(15, 23, 42, 0.5);
-  border-color: rgba(255, 255, 255, 0.07);
+body.theme-dark .excel-table-card {
+  background: rgba(15, 23, 42, 0.75);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
 }
 
-.group-table-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  margin-bottom: 6px;
-}
-
-body.theme-dark .group-table-header-row {
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-.group-table-title {
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text-title);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+/* Excel Sheet Mini Header */
+.excel-formula-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
-}
-
-.group-table-source-tag {
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(241, 245, 249, 0.7);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+  font-family: var(--font-body);
   font-size: 11px;
-  font-weight: 600;
   color: var(--text-muted);
 }
 
-.group-table-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding-right: 4px;
+body.theme-dark .excel-formula-bar {
+  background: rgba(30, 41, 59, 0.5);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
-.group-table-scroll::-webkit-scrollbar {
-  width: 4px;
+.excel-fx-tag {
+  font-weight: 800;
+  font-style: italic;
+  font-family: serif;
+  color: var(--accent-blue);
+  font-size: 13px;
 }
 
-.group-table-scroll::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.4);
-  border-radius: 4px;
+.excel-formula-value {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--text-title);
 }
 
-.group-data-table {
+/* Excel Main Table */
+.excel-native-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
+  font-family: var(--font-body);
+  font-size: 13.5px;
 }
 
-.group-data-table th {
+/* Peach / Salmon Header from original photo */
+.excel-native-table thead tr {
+  background: #f7dcd6;
+  border-bottom: 1.5px solid #e2b4aa;
+}
+
+body.theme-dark .excel-native-table thead tr {
+  background: rgba(244, 63, 94, 0.22);
+  border-bottom: 1.5px solid rgba(244, 63, 94, 0.4);
+}
+
+.excel-native-table th {
+  padding: 8px 16px;
+  font-family: var(--font-display);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.2px;
+}
+
+body.theme-dark .excel-native-table th {
+  color: #f8fafc;
+}
+
+.excel-native-table th.th-left {
   text-align: left;
-  font-weight: 700;
-  color: var(--text-muted);
-  font-size: 11px;
-  padding: 4px 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
 }
 
-.group-data-table th.th-right {
+.excel-native-table th.th-right {
   text-align: right;
 }
 
-.group-data-table tr.group-table-row {
-  border-bottom: 1px solid rgba(226, 232, 240, 0.5);
-  transition: background 0.15s ease, transform 0.15s ease;
+/* Rows */
+.excel-row {
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  transition: background 0.15s ease;
   cursor: pointer;
 }
 
-body.theme-dark .group-data-table tr.group-table-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+body.theme-dark .excel-row {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.group-data-table tr.group-table-row:hover,
-.group-data-table tr.group-table-row.is-active-row {
-  background: rgba(2, 132, 199, 0.08);
+.excel-row:hover,
+.excel-row.is-active-excel-row {
+  background: rgba(5, 150, 105, 0.08);
 }
 
-body.theme-dark .group-data-table tr.group-table-row:hover,
-body.theme-dark .group-data-table tr.group-table-row.is-active-row {
-  background: rgba(56, 189, 248, 0.12);
+body.theme-dark .excel-row:hover,
+body.theme-dark .excel-row.is-active-excel-row {
+  background: rgba(52, 211, 153, 0.12);
 }
 
-.group-data-table td {
-  padding: 5.5px 6px;
-  color: var(--text-sub);
-}
-
-.td-rank {
-  font-weight: 800;
-  color: var(--text-muted);
-  width: 22px;
-  font-size: 11px;
-}
-
-.td-group-name {
-  font-weight: 800;
-  color: var(--text-title);
+.excel-cell-group {
+  padding: 8.5px 16px;
   font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text-title);
+  letter-spacing: -0.2px;
 }
 
-.td-region {
-  font-size: 11px;
-  color: var(--text-muted);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 130px;
-}
-
-.td-growth {
-  font-weight: 900;
+.excel-cell-val {
+  padding: 8.5px 16px;
   text-align: right;
   font-family: var(--font-display);
-  font-size: 12.5px;
-}
-
-.td-growth.growth-high {
-  color: #059669;
-}
-
-body.theme-dark .td-growth.growth-high {
-  color: #34d399;
-}
-
-.td-growth.growth-mod {
-  color: #16a34a;
-}
-
-body.theme-dark .td-growth.growth-mod {
-  color: #4ade80;
-}
-
-.td-growth.growth-low {
-  color: #0284c7;
-}
-
-body.theme-dark .td-growth.growth-low {
-  color: #38bdf8;
-}
-
-/* Total Row in Table */
-tr.group-table-total-row {
-  background: rgba(15, 23, 42, 0.06);
-  border-top: 1.5px solid rgba(15, 23, 42, 0.2);
   font-weight: 800;
+  color: var(--text-sub);
+  letter-spacing: -0.2px;
 }
 
-body.theme-dark tr.group-table-total-row {
-  background: rgba(255, 255, 255, 0.06);
-  border-top-color: rgba(255, 255, 255, 0.15);
+/* Total Row */
+.excel-row-total {
+  border-top: 1.5px solid rgba(15, 23, 42, 0.25);
+  background: rgba(248, 250, 252, 0.6);
+  font-weight: 900;
 }
 
-tr.group-table-total-row td {
-  padding: 7px 6px;
+body.theme-dark .excel-row-total {
+  border-top-color: rgba(255, 255, 255, 0.18);
+  background: rgba(30, 41, 59, 0.4);
+}
+
+.excel-row-total .excel-cell-group {
+  font-weight: 900;
   color: var(--text-title);
 }
 
-/* Strategic Insight Cards at bottom of right column */
-.group-insight-card {
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(226, 232, 240, 0.9);
-  border-radius: 14px;
-  padding: 10px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex-shrink: 0;
+/* Active Excel Cell highlight with green border */
+.excel-total-highlight-cell {
+  position: relative;
+  border: 2px solid #059669 !important;
+  background: rgba(5, 150, 105, 0.06);
+  color: #059669 !important;
+  font-weight: 900 !important;
+  border-radius: 4px;
 }
 
-body.theme-dark .group-insight-card {
-  background: rgba(15, 23, 42, 0.5);
-  border-color: rgba(255, 255, 255, 0.07);
-}
-
-.insight-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 800;
-  color: #059669;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-body.theme-dark .insight-header {
-  color: #34d399;
-}
-
-.insight-text {
-  font-size: 11.5px;
-  line-height: 1.4;
-  color: var(--text-muted);
-}
-
-.insight-text strong {
-  color: var(--text-title);
-  font-weight: 700;
+body.theme-dark .excel-total-highlight-cell {
+  border-color: #34d399 !important;
+  color: #34d399 !important;
+  background: rgba(52, 211, 153, 0.1);
 }

@@ -4,16 +4,16 @@ import {
   TOTAL_GROUP_DATA,
   TOTAL_GROUPS_COUNT,
   LEADER_GROUP,
-  GroupGrowthItem,
+  EXCEL_TABLE_DATA,
 } from '../../data/groupGrowth';
-import { TrendingUp, Award, CheckCircle2, RefreshCw, BarChart3, Sparkles } from 'lucide-react';
+import { TrendingUp, Award, CheckCircle2, RefreshCw } from 'lucide-react';
 
 interface GroupGrowthSlideProps {
   isActive?: boolean;
 }
 
 export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = true }) => {
-  const [hoveredGroup, setHoveredGroup] = useState<GroupGrowthItem | null>(null);
+  const [hoveredGroupId, setHoveredGroupId] = useState<string | null>(null);
   const [isHoveredTotal, setIsHoveredTotal] = useState<boolean>(false);
   const [isAnimating, setIsAnimating] = useState<boolean>(true);
   const [cycleCount, setCycleCount] = useState<number>(0);
@@ -43,12 +43,12 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
   }, [isActive, triggerCascade]);
 
   // SVG Geometry constants
-  const svgWidth = 750;
+  const svgWidth = 730;
   const svgHeight = 470;
   const zeroX = 135; // X position for 0%
   const maxPct = 30;
-  const chartWidth = 570;
-  const pxPerPct = chartWidth / maxPct; // 19px per 1%
+  const chartWidth = 550;
+  const pxPerPct = chartWidth / maxPct; // 18.33px per 1%
   const startY = 46;
   const rowHeight = 31;
   const barThickness = 19;
@@ -113,7 +113,7 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
           </div>
         </div>
 
-        {/* DUAL SPLIT: HORIZONTAL CHART (LEFT) + EXECUTIVE TABLE & INSIGHTS (RIGHT) */}
+        {/* DUAL SPLIT: HORIZONTAL CHART (LEFT) + EXACT EXCEL TABLE (RIGHT) */}
         <div className="group-content-split">
           {/* LEFT: SVG HORIZONTAL BAR CHART */}
           <div className="group-chart-canvas-wrap">
@@ -124,31 +124,26 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
               className="group-svg-element"
             >
               <defs>
-                {/* Green Gradient for High Growth (APU 28%) */}
                 <linearGradient id="grad-green-leader" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#10b981" />
                   <stop offset="100%" stopColor="#047857" />
                 </linearGradient>
 
-                {/* Green Gradient for Double Digit (CSM, POTOSI) */}
                 <linearGradient id="grad-green-tier2" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#34d399" />
                   <stop offset="100%" stopColor="#059669" />
                 </linearGradient>
 
-                {/* Green Gradient for Average Range (8%) */}
                 <linearGradient id="grad-green-tier3" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#4ade80" />
                   <stop offset="100%" stopColor="#16a34a" />
                 </linearGradient>
 
-                {/* Green Gradient for Moderate Growth (7%, 3%, 2%) */}
                 <linearGradient id="grad-green-tier4" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#86efac" />
                   <stop offset="100%" stopColor="#22c55e" />
                 </linearGradient>
 
-                {/* Navy / Dark Slate Gradient for Total (8%) */}
                 <linearGradient id="grad-total-navy" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor="#334155" />
                   <stop offset="100%" stopColor="#0f172a" />
@@ -200,7 +195,7 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
 
               {/* X Axis Title */}
               <text
-                x={zeroX + (chartWidth / 2)}
+                x={zeroX + chartWidth / 2}
                 y={axisY + 33}
                 className="group-axis-title"
               >
@@ -210,7 +205,7 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
               {/* 9 GROUP ROWS (TOP TO BOTTOM CASCADE) */}
               {GROUP_GROWTH_DATA.map((item, idx) => {
                 const y = startY + idx * rowHeight;
-                const isHovered = hoveredGroup?.id === item.id;
+                const isHovered = hoveredGroupId === item.id;
                 const delayMs = idx * 80;
 
                 let barGrad = 'url(#grad-green-tier3)';
@@ -225,11 +220,10 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
                   <g
                     key={item.id}
                     className="group-row-group"
-                    onMouseEnter={() => setHoveredGroup(item)}
-                    onMouseLeave={() => setHoveredGroup(null)}
-                    opacity={hoveredGroup && !isHovered ? 0.45 : 1}
+                    onMouseEnter={() => setHoveredGroupId(item.id)}
+                    onMouseLeave={() => setHoveredGroupId(null)}
+                    opacity={hoveredGroupId && !isHovered ? 0.45 : 1}
                   >
-                    {/* Row highlight on hover */}
                     {isHovered && (
                       <rect
                         x="20"
@@ -241,7 +235,7 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
                       />
                     )}
 
-                    {/* Group Name Label (Right-aligned to zeroX - 12) */}
+                    {/* Group Name Label */}
                     <text
                       x={zeroX - 12}
                       y={y + 14}
@@ -316,7 +310,7 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
                     className="group-row-group"
                     onMouseEnter={() => setIsHoveredTotal(true)}
                     onMouseLeave={() => setIsHoveredTotal(false)}
-                    opacity={hoveredGroup ? 0.45 : 1}
+                    opacity={hoveredGroupId ? 0.45 : 1}
                   >
                     {isHoveredTotal && (
                       <rect
@@ -329,7 +323,6 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
                       />
                     )}
 
-                    {/* Total Label */}
                     <text
                       x={zeroX - 12}
                       y={totalY + 14}
@@ -343,7 +336,6 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
                       {TOTAL_GROUP_DATA.group}
                     </text>
 
-                    {/* Total Dark Navy Bar */}
                     <rect
                       x={zeroX}
                       y={totalY}
@@ -361,7 +353,6 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
                       }}
                     />
 
-                    {/* Total Value Label */}
                     <text
                       className="group-val-label"
                       x={zeroX + totalBarWidth + 8}
@@ -385,89 +376,58 @@ export const GroupGrowthSlide: React.FC<GroupGrowthSlideProps> = ({ isActive = t
             </svg>
           </div>
 
-          {/* RIGHT: EXECUTIVE RANKING TABLE & TAKEAWAY PANEL */}
-          <div className="group-side-panel">
-            {/* Table Card */}
-            <div className="group-table-card">
-              <div className="group-table-header-row">
-                <div className="group-table-title">
-                  <BarChart3 size={15} style={{ color: '#059669' }} />
-                  <span>Matriz de Crecimiento YTD</span>
-                </div>
-                <span className="group-table-source-tag">9 Grupos Oficiales</span>
+          {/* RIGHT: EXACT EXCEL TABLE FROM IMAGE (Grupo | Crec YTD) */}
+          <div className="group-excel-panel">
+            <div className="excel-table-card">
+              {/* Formula Bar with fx like in Excel */}
+              <div className="excel-formula-bar">
+                <span className="excel-fx-tag">fx</span>
+                <span className="excel-formula-value">7.8396554...</span>
               </div>
 
-              <div className="group-table-scroll">
-                <table className="group-data-table">
-                  <thead>
-                    <tr>
-                      <th className="td-rank">#</th>
-                      <th>Grupo</th>
-                      <th>Región / Cobertura</th>
-                      <th className="th-right">Crec YTD</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {GROUP_GROWTH_DATA.map((item) => {
-                      const isHovered = hoveredGroup?.id === item.id;
-                      let growthClass = 'growth-mod';
-                      if (item.growth >= 10) growthClass = 'growth-high';
-                      else if (item.growth < 5) growthClass = 'growth-low';
+              {/* Main Native Table with Peach Header */}
+              <table className="excel-native-table">
+                <thead>
+                  <tr>
+                    <th className="th-left">Grupo</th>
+                    <th className="th-right">Crec YTD</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {EXCEL_TABLE_DATA.map((row) => {
+                    const isTotal = row.isTotal;
+                    const isHovered = hoveredGroupId === row.id || (isTotal && isHoveredTotal);
 
+                    if (isTotal) {
                       return (
                         <tr
-                          key={item.id}
-                          className={`group-table-row ${isHovered ? 'is-active-row' : ''}`}
-                          onMouseEnter={() => setHoveredGroup(item)}
-                          onMouseLeave={() => setHoveredGroup(null)}
+                          key="total-row"
+                          className={`excel-row excel-row-total ${isHovered ? 'is-active-excel-row' : ''}`}
+                          onMouseEnter={() => setIsHoveredTotal(true)}
+                          onMouseLeave={() => setIsHoveredTotal(false)}
                         >
-                          <td className="td-rank">{item.rank}</td>
-                          <td className="td-group-name">{item.group}</td>
-                          <td className="td-region" title={item.fullName + ' - ' + item.region}>
-                            {item.region}
+                          <td className="excel-cell-group">{row.group}</td>
+                          <td className="excel-cell-val excel-total-highlight-cell">
+                            {row.growth}%
                           </td>
-                          <td className={`td-growth ${growthClass}`}>+{item.growth}%</td>
                         </tr>
                       );
-                    })}
+                    }
 
-                    {/* Total Row in Table */}
-                    <tr
-                      className={`group-table-total-row ${isHoveredTotal ? 'is-active-row' : ''}`}
-                      onMouseEnter={() => setIsHoveredTotal(true)}
-                      onMouseLeave={() => setIsHoveredTotal(false)}
-                    >
-                      <td className="td-rank">★</td>
-                      <td className="td-group-name">Total Red</td>
-                      <td className="td-region">Consolidado Nacional</td>
-                      <td className="td-growth" style={{ color: 'var(--text-title)' }}>
-                        +{TOTAL_GROUP_DATA.growth}%
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            {/* Strategic Takeaways Box */}
-            <div className="group-insight-card">
-              <div className="insight-header">
-                <Sparkles size={14} />
-                <span>Hallazgos Clave de Crecimiento</span>
-              </div>
-              <p className="insight-text">
-                {hoveredGroup ? (
-                  <>
-                    <strong>{hoveredGroup.fullName}:</strong> {hoveredGroup.details}
-                  </>
-                ) : (
-                  <>
-                    <strong>Liderazgo de APU:</strong> Corporación Apu alcanza un extraordinario{' '}
-                    <strong>+28% YTD</strong>, superando con creces la meta nacional de +8%. CSM y
-                    Potosí consolidan crecimiento de doble dígito en el oriente y selva sur.
-                  </>
-                )}
-              </p>
+                    return (
+                      <tr
+                        key={row.id}
+                        className={`excel-row ${isHovered ? 'is-active-excel-row' : ''}`}
+                        onMouseEnter={() => setHoveredGroupId(row.id)}
+                        onMouseLeave={() => setHoveredGroupId(null)}
+                      >
+                        <td className="excel-cell-group">{row.group}</td>
+                        <td className="excel-cell-val">{row.growth}%</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
