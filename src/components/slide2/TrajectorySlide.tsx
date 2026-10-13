@@ -112,17 +112,6 @@ export const TrajectorySlide: React.FC<TrajectorySlideProps> = ({
           </div>
         </div>
 
-        {/* CURRENT STEP NARRATIVE BANNER */}
-        <div className="step-narrative-banner">
-          <span className="step-narrative-tag">Fase Activa {subStep}/6:</span>
-          <span className="step-narrative-text">
-            {STEP_DESCRIPTIONS[subStep - 1]?.detail || 'Todas las barras activas'}
-          </span>
-          <span className="step-nav-hint">
-            Usa las flechas <strong>←</strong> / <strong>→</strong> del teclado para avanzar
-          </span>
-        </div>
-
         {/* FULL-WIDTH BAR CHART SVG */}
         <TrajectoryBarChart
           trajectory={CONSOLIDATED_TRAJECTORY}
