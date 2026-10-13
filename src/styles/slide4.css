@@ -1,7 +1,6 @@
 /* =========================================================================
-   SLIDE 4: CRECIMIENTO YTD POR GRUPO
-   Izquierda: Gráfico SVG horizontal de 9 Grupos
-   Derecha: Tabla Exacta de Excel (Grupo | Crec YTD)
+   SLIDE 4: CRECIMIENTO YTD POR GRUPO (DISEÑO PANORÁMICO COMPLETO 16:9)
+   Gráfico de barras horizontales de 9 Grupos + Total Red Nacional (8%)
    ========================================================================= */
 
 .deck-grid-slide4 {
@@ -13,7 +12,7 @@
   min-height: 0;
 }
 
-.group-growth-card-full {
+.group-chart-card-full {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 20px;
@@ -31,7 +30,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
   flex-shrink: 0;
 }
 
@@ -112,33 +111,15 @@ body.theme-dark .pill-group-total {
   border-color: rgba(2, 132, 199, 0.22);
 }
 
-/* Dual Content Split: Chart on Left (64%) + Exact Excel Table on Right (36%) */
-.group-content-split {
-  display: grid;
-  grid-template-columns: 1.6fr 1fr;
-  gap: 22px;
+/* Full Width Canvas Area (Like Slide 3) */
+.group-canvas-area {
   flex: 1;
   min-height: 0;
-  overflow: hidden;
-  align-items: stretch;
-}
-
-/* Chart Canvas Section */
-.group-chart-canvas-wrap {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid rgba(226, 232, 240, 0.85);
-  border-radius: 16px;
-  padding: 10px 16px 8px 16px;
-  overflow: hidden;
-  height: 100%;
-}
-
-body.theme-dark .group-chart-canvas-wrap {
-  background: rgba(15, 23, 42, 0.45);
-  border-color: rgba(255, 255, 255, 0.06);
+  width: 100%;
 }
 
 .group-svg-element {
@@ -150,7 +131,8 @@ body.theme-dark .group-chart-canvas-wrap {
 
 /* Axis & Grid */
 .group-grid-line {
-  stroke: rgba(148, 163, 184, 0.25);
+  stroke: rgba(100, 116, 139, 0.16);
+  stroke-dasharray: 4 4;
 }
 
 body.theme-dark .group-grid-line {
@@ -158,36 +140,39 @@ body.theme-dark .group-grid-line {
 }
 
 .group-axis-text {
-  font-family: var(--font-body);
-  font-size: 11px;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
   fill: var(--text-muted);
   text-anchor: middle;
+  font-variant-numeric: tabular-nums;
 }
 
 .group-axis-title {
-  font-family: var(--font-body);
+  font-family: var(--font-display);
   font-size: 12px;
-  font-weight: 700;
-  fill: var(--text-sub);
+  font-weight: 800;
+  font-style: italic;
+  fill: var(--text-muted);
   text-anchor: middle;
 }
 
 .group-name-label {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 800;
   letter-spacing: -0.2px;
   fill: var(--text-title);
   cursor: pointer;
-  transition: fill 0.2s ease;
+  transition: fill 0.2s ease, font-weight 0.2s ease;
 }
 
 .group-val-label {
   font-family: var(--font-display);
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 900;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.2px;
+  font-variant-numeric: tabular-nums;
 }
 
 .group-row-group {
@@ -195,126 +180,11 @@ body.theme-dark .group-grid-line {
   transition: opacity 0.2s ease;
 }
 
-/* RIGHT COLUMN: EXACT EXCEL TABLE CONTAINER */
-.group-excel-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
-  min-height: 0;
-  overflow: hidden;
-}
-
-/* Authentic Excel Sheet Card */
-.excel-table-card {
-  background: rgba(255, 255, 255, 0.9);
-  border: 1px solid rgba(203, 213, 225, 0.9);
-  border-radius: 14px;
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  max-height: 100%;
-}
-
-body.theme-dark .excel-table-card {
-  background: rgba(15, 23, 42, 0.75);
-  border-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-}
-
-/* Excel Main Table */
-.excel-native-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-family: var(--font-body);
-  font-size: 13.5px;
-}
-
-/* Peach / Salmon Header from original photo */
-.excel-native-table thead tr {
-  background: #f7dcd6;
-  border-bottom: 1.5px solid #e2b4aa;
-}
-
-body.theme-dark .excel-native-table thead tr {
-  background: rgba(244, 63, 94, 0.22);
-  border-bottom: 1.5px solid rgba(244, 63, 94, 0.4);
-}
-
-.excel-native-table th {
-  padding: 8px 16px;
-  font-family: var(--font-display);
-  font-size: 13.5px;
-  font-weight: 800;
-  color: #1e293b;
-  letter-spacing: -0.2px;
-}
-
-body.theme-dark .excel-native-table th {
-  color: #f8fafc;
-}
-
-.excel-native-table th.th-left {
-  text-align: left;
-}
-
-.excel-native-table th.th-right {
-  text-align: right;
-}
-
-/* Rows */
-.excel-row {
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
-  transition: background 0.15s ease;
-  cursor: pointer;
-}
-
-body.theme-dark .excel-row {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.excel-row:hover,
-.excel-row.is-active-excel-row {
-  background: rgba(5, 150, 105, 0.08);
-}
-
-body.theme-dark .excel-row:hover,
-body.theme-dark .excel-row.is-active-excel-row {
-  background: rgba(52, 211, 153, 0.12);
-}
-
-.excel-cell-group {
-  padding: 8.5px 16px;
-  font-family: var(--font-display);
-  font-weight: 700;
-  color: var(--text-title);
-  letter-spacing: -0.2px;
-}
-
-.excel-cell-val {
-  padding: 8.5px 16px;
-  text-align: right;
-  font-family: var(--font-display);
-  font-weight: 800;
-  color: var(--text-sub);
-  letter-spacing: -0.2px;
-}
-
-/* Total Row */
-.excel-row-total {
-  border-top: 1.5px solid rgba(15, 23, 42, 0.25);
-  background: rgba(248, 250, 252, 0.6);
+.group-row-group:hover .group-name-label {
+  fill: #059669;
   font-weight: 900;
 }
 
-body.theme-dark .excel-row-total {
-  border-top-color: rgba(255, 255, 255, 0.18);
-  background: rgba(30, 41, 59, 0.4);
-}
-
-.excel-row-total .excel-cell-group,
-.excel-row-total .excel-cell-val {
-  font-weight: 900;
-  color: var(--text-title);
+body.theme-dark .group-row-group:hover .group-name-label {
+  fill: #34d399;
 }
